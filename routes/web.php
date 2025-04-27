@@ -15,6 +15,9 @@ Route::get('/shop/product/{id}', [ProductOrderController::class, 'show'])->name(
 Route::post('/shop/order', [ProductOrderController::class, 'store'])->name('shop.order.store');
 Route::get('/shop/order/success/{orderId}', [ProductOrderController::class, 'success'])->name('shop.order.success');
 
+// Add these routes for order management and payment proof upload
+Route::post('/shop/payment/upload/{order}', [ProductOrderController::class, 'uploadPaymentProof'])->name('shop.payment.upload');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
@@ -35,6 +38,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //Order routes
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::put('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update.status');
     //Shipping routes
     Route::resource('shipping', ShippingController::class);
 });

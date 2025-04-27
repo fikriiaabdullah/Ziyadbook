@@ -3,523 +3,521 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>ZiyadBooks | Landing Page</title>
+    <title>ZiyadBooks | Toko Buku Premium</title>
 
     <!-- Fonts -->
-    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* Base styles */
-        body {
-            font-family: 'Figtree', sans-serif;
-            margin: 0;
-            padding: 0;
-            color: #1a202c;
-            background-color: #f0f4f8;
-            transition: background-color 0.3s, color 0.3s;
+        :root {
+            --primary: #3547e9;
+            --primary-dark: #246aed;
+            --primary-light: #c4b5fd;
+            --secondary: #f5f3ff;
+            --accent: #386fd6;
+            --accent-light: #ddd6fe;
+            --gold: #d4af37;
+            --gold-light: #f7f0d7;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --background: #ffffff;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
         }
 
-        body.dark {
-            background-color: #0f172a;
-            color: #f3f4f6;
+        .dark {
+            --primary: #8b5cf6;
+            --primary-dark: #7c3aed;
+            --primary-light: #a78bfa;
+            --secondary: #2e1065;
+            --accent: #c4b5fd;
+            --accent-light: #4c1d95;
+            --gold: #f7b94c;
+            --gold-light: #4c3a1e;
+            --text: #f8fafc;
+            --text-light: #cbd5e1;
+            --background: #0f172a;
+            --card: #1e293b;
+            --border: #334155;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
+            --shadow-soft: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.7;
+            transition: background-color 0.3s, color 0.3s;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5 {
+            font-family: 'Playfair Display', serif;
         }
 
         .container {
-            min-height: 100vh;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--card);
+            box-shadow: var(--shadow-soft);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-container {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            padding: 2rem 1.5rem;
+            padding: 1rem 1.5rem;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo svg {
+            width: 28px;
+            height: 28px;
+            stroke: var(--gold);
+            fill: none;
+        }
+
+        .logo span {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .nav-link.btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            padding: 0.5rem 1.25rem;
+            border-radius: 2rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 6px rgba(139, 92, 246, 0.25);
+        }
+
+        .nav-link.btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(139, 92, 246, 0.35);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 0;
             position: relative;
             overflow: hidden;
         }
 
-        /* Hero section */
-        .hero {
-            max-width: 48rem;
-            text-align: center;
+        .hero-container {
+            padding: 6rem 0;
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+            position: relative;
             z-index: 1;
         }
 
-        .gradient-text {
-            background: linear-gradient(to right, #3b82f6, #2dd4bf);
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -10vw; /* tadinya -100px */
+            right: -10vw;
+            width: clamp(150px, 25vw, 400px); /* minimal 200px, maksimal 400px, fleksibel */
+            height: clamp(200px, 30vw, 400px);
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary-light) 0%, rgba(139, 92, 246, 0) 70%);
+            opacity: 0.4;
+            z-index: 0;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -150px;
+            left: -150px;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--gold-light) 0%, rgba(212, 175, 55, 0) 70%);
+            opacity: 0.4;
+            z-index: 0;
+        }
+
+        .hero-content {
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-subtitle-tag {
+            display: inline-block;
+            background-color: var(--accent-light);
+            color: var(--primary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            letter-spacing: -0.5px;
+        }
+
+        .hero-title span {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             -webkit-background-clip: text;
-            background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
             display: inline-block;
         }
 
-        h1 {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
+        .hero-title span::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 6px;
+            bottom: 8px;
+            left: 0;
+            background-color: var(--gold-light);
+            z-index: -1;
+            opacity: 0.6;
         }
 
-        .subtitle {
+        .hero-subtitle {
             font-size: 1.25rem;
-            color: #4b5563;
-            margin-bottom: 2rem;
+            color: var(--text-light);
+            margin-bottom: 2.5rem;
+            max-width: 36rem;
+            font-weight: 300;
+            line-height: 1.8;
         }
 
-        body.dark .subtitle {
-            color: #d1d5db;
-        }
-
-        /* Buttons */
-        .btn-container {
+        .hero-buttons {
             display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 2rem;
+            gap: 1.25rem;
         }
 
         .btn {
             display: inline-block;
-            padding: 0.75rem 1.5rem;
-            border-radius: 9999px;
+            padding: 0.875rem 1.75rem;
             font-weight: 600;
             text-decoration: none;
-            transition: all 0.3s ease;
+            border-radius: 2rem;
+            transition: all 0.3s;
             cursor: pointer;
+            letter-spacing: 0.5px;
+            font-size: 1rem;
         }
 
         .btn-primary {
-            background: linear-gradient(to right, #3b82f6, #2dd4bf);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             color: white;
-            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.25);
+            border: none;
+            box-shadow: 0 4px 10px rgba(139, 92, 246, 0.3);
         }
 
         .btn-primary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+            box-shadow: 0 6px 15px rgba(139, 92, 246, 0.4);
         }
 
         .btn-secondary {
-            border: 1px solid #d1d5db;
-            color: #4b5563;
             background-color: transparent;
-        }
-
-        body.dark .btn-secondary {
-            border-color: #4b5563;
-            color: #e5e7eb;
-        }
-
-        .btn-secondary:hover {
-            background-color: rgba(0, 0, 0, 0.05);
-            transform: translateY(-3px);
-        }
-
-        body.dark .btn-secondary:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        /* Features section */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(1, 1fr);
-            gap: 2rem;
-            width: 100%;
-            max-width: 72rem;
-            margin-top: 4rem;
-        }
-
-        @media (min-width: 768px) {
-            .features {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        .feature-card {
-            padding: 1.5rem;
-            border-radius: 1rem;
-            background-color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
+            color: var(--text);
+            border: 1px solid var(--primary-light);
             position: relative;
             overflow: hidden;
-        }
-
-        body.dark .feature-card {
-            background-color: #1e293b;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px) rotate(1deg);
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.15);
-        }
-
-        body.dark .feature-card:hover {
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.25);
-        }
-
-        .feature-card h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .feature-card p {
-            color: #6b7280;
-            font-size: 1rem;
-            line-height: 1.5;
-        }
-
-        body.dark .feature-card p {
-            color: #9ca3af;
-        }
-
-        .feature-icon {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            color: #3b82f6;
-            transition: transform 0.5s ease;
-        }
-
-        .feature-card:hover .feature-icon {
-            transform: scale(1.2) rotate(-5deg);
-        }
-
-        /* Footer */
-        footer {
-            margin-top: 4rem;
-            color: #6b7280;
-            font-size: 0.875rem;
-            text-align: center;
-        }
-
-        body.dark footer {
-            color: #9ca3af;
-        }
-
-        /* Background effects */
-        .bg-pattern {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.05;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        /* Animated elements */
-        .floating {
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-20px);
-            }
-            100% {
-                transform: translateY(0px);
-            }
-        }
-
-        /* Theme toggle */
-        .theme-toggle {
-            position: absolute;
-            top: 1.5rem;
-            right: 1.5rem;
-            background: none;
-            border: none;
-            color: #4b5563;
-            font-size: 1.5rem;
-            cursor: pointer;
-            z-index: 10;
-        }
-
-        body.dark .theme-toggle {
-            color: #e5e7eb;
-        }
-
-        /* Additional decorative elements */
-        .circle {
-            position: absolute;
-            border-radius: 50%;
-            background: linear-gradient(to right, #3b82f6, #2dd4bf);
-            opacity: 0.08;
-            z-index: -1;
-        }
-
-        .circle-1 {
-            width: 300px;
-            height: 300px;
-            top: -150px;
-            left: -150px;
-        }
-
-        .circle-2 {
-            width: 400px;
-            height: 400px;
-            bottom: -200px;
-            right: -200px;
-        }
-
-        /* Book animations */
-        .book-animation {
-            position: absolute;
-            opacity: 0.6;
-            pointer-events: none;
-        }
-
-        .book-1 {
-            top: 15%;
-            left: 10%;
-            animation: float 5s ease-in-out infinite;
-        }
-
-        .book-2 {
-            bottom: 20%;
-            right: 10%;
-            animation: float 7s ease-in-out infinite reverse;
-        }
-
-        /* Wave animation */
-        .wave {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100px;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%233b82f6' fill-opacity='0.1' d='M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,213.3C1248,235,1344,213,1392,202.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
-            background-size: 1440px 100px;
-            animation: wave 15s linear infinite;
-        }
-
-        .wave-2 {
-            opacity: 0.3;
-            height: 120px;
-            animation-duration: 10s;
-            animation-direction: reverse;
-        }
-
-        @keyframes wave {
-            0% {
-                background-position-x: 0;
-            }
-            100% {
-                background-position-x: 1440px;
-            }
-        }
-
-        /* Particle animation */
-        .particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: -1;
-        }
-
-        .particle {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: #3b82f6;
-            border-radius: 50%;
-            opacity: 0.3;
-        }
-
-        /* Book opening animation */
-        .book-open {
-            position: absolute;
-            width: 60px;
-            height: 40px;
             z-index: 1;
         }
 
-        .book-open .cover {
+        .btn-secondary::before {
+            content: '';
             position: absolute;
-            width: 30px;
-            height: 40px;
-            background-color: #3b82f6;
-            border-radius: 2px;
-            transition: transform 0.5s ease;
-        }
-
-        .book-open .cover-left {
-            left: 0;
-            transform-origin: left;
-            transform: rotateY(0deg);
-        }
-
-        .book-open .cover-right {
-            right: 0;
-            transform-origin: right;
-            transform: rotateY(0deg);
-        }
-
-        .book-open:hover .cover-left {
-            transform: rotateY(-60deg);
-        }
-
-        .book-open:hover .cover-right {
-            transform: rotateY(60deg);
-        }
-
-        .book-open .pages {
-            position: absolute;
-            left: 15px;
-            width: 30px;
-            height: 36px;
-            background-color: white;
-            border-radius: 1px;
-            z-index: -1;
-        }
-
-        .book-open-1 {
-            top: 30%;
-            left: 20%;
-            transform: rotate(-15deg);
-        }
-
-        .book-open-2 {
-            top: 60%;
-            right: 15%;
-            transform: rotate(10deg);
-            animation: float 9s ease-in-out infinite;
-        }
-
-        /* Spotlight effect */
-        .spotlight {
-            position: absolute;
-            width: 100%;
-            height: 100%;
             top: 0;
             left: 0;
-            pointer-events: none;
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent-light) 100%);
+            transition: width 0.3s ease;
+            z-index: -1;
+            opacity: 0.2;
+        }
+
+        .btn-secondary:hover::before {
+            width: 100%;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary-dark);
+        }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            position: relative;
             z-index: 2;
-            opacity: 0.05;
-            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), #3b82f6 0%, transparent 50%);
+        }
+
+        .hero-image img {
+            max-width: 60%; /* dari parent container */
+            height: auto;
+            border-radius: 1rem;
+            box-shadow: var(--shadow);
+            transform: perspective(1000px) rotateY(-5deg);
+            transition: transform 0.5s, box-shadow 0.5s;
+            border: 5px solid white;
+        }
+
+        .hero-image img:hover {
+            transform: perspective(1000px) rotateY(0deg);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .hero-image::before {
+            content: '';
+            position: absolute;
+            width: 80%;
+            height: 100%;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent-light) 100%);
+            z-index: -1;
+            border-radius: 1rem;
+            opacity: 0.2;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--secondary);
+            transform: rotate(15deg);
+        }
+
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s;
+        }
+
+        .theme-toggle:hover svg {
+            transform: scale(1.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-container {
+                flex-direction: column;
+                padding: 3rem 0;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-image {
+                order: -1;
+                margin-bottom: 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero::before, .hero::after {
+                opacity: 0.2;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-menu-btn {
+                display: none;
+            }
+        }
+
+        /* Animation elements */
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Mobile menu button */
+        .mobile-menu-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+            border: 1px solid var(--border);
+        }
+
+        .mobile-menu-btn:hover {
+            background-color: var(--secondary);
+        }
+
+        /* Decorative elements */
+        .decorative-border {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--gold) 0%, rgba(212, 175, 55, 0) 100%);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Background elements -->
-        <div class="circle circle-1"></div>
-        <div class="circle circle-2"></div>
-
-        <!-- Wave animation -->
-        <div class="wave"></div>
-        <div class="wave wave-2"></div>
-
-        <!-- Particles -->
-        <div class="particles" id="particles"></div>
-
-        <!-- Spotlight effect -->
-        <div class="spotlight" id="spotlight"></div>
-
-        <!-- Book animations -->
-        <div class="book-animation book-1">
-            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-            </svg>
+    <header>
+        <div class="header-container container">
+            <a href="/" class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+                <span>ZiyadBooks</span>
+            </a>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                <svg class="moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+                <svg class="sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
         </div>
+    </header>
 
-        <div class="book-animation book-2">
-            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-            </svg>
-        </div>
-
-        <!-- Interactive Book elements -->
-        <div class="book-open book-open-1">
-            <div class="cover cover-left"></div>
-            <div class="pages"></div>
-            <div class="cover cover-right"></div>
-        </div>
-
-        <div class="book-open book-open-2">
-            <div class="cover cover-left"></div>
-            <div class="pages"></div>
-            <div class="cover cover-right"></div>
-        </div>
-
-        <!-- Theme toggle button -->
-        <button class="theme-toggle" id="themeToggle">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="moon">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-            </svg>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="sun" style="display: none;">
-                <circle cx="12" cy="12" r="5"></circle>
-                <line x1="12" y1="1" x2="12" y2="3"></line>
-                <line x1="12" y1="21" x2="12" y2="23"></line>
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                <line x1="1" y1="12" x2="3" y2="12"></line>
-                <line x1="21" y1="12" x2="23" y2="12"></line>
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-            </svg>
-        </button>
-
-        <!-- Hero Section -->
-        <div class="hero">
-            <h1 class="title floating">Welcome to <span class="gradient-text">ZiyadBooks</span></h1>
-            <p class="subtitle">Kelola stok, pemesanan, penjualan & analisis tren dengan mudah. Semua di satu tempat.</p>
-            <div class="btn-container">
-                <a href="{{route('shop.products.index')}}" class="btn btn-primary">Pesan Sekarang</a>
-                <a href="login" class="btn btn-secondary">Login</a>
-            </div>
-        </div>
-
-        <!-- Feature Cards -->
-        <section class="features">
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                    </svg>
+    <section class="hero">
+        <div class="container">
+            <div class="hero-container">
+                <div class="hero-content">
+                    <div class="hero-subtitle-tag">Premium Collection</div>
+                    <h1 class="hero-title">Discover Literary Elegance at <span>ZiyadBooks</span></h1>
+                    <p class="hero-subtitle">Immerse yourself in our curated collection of premium books across diverse genres. Each title selected for quality, significance, and the joy of reading.</p>
+                    <div class="hero-buttons">
+                        <a href="{{route('shop.products.index')}}" class="btn btn-primary">Explore Collection</a>
+                        <a href="{{ route('login') }}" class="btn btn-secondary">Member Login</a>
+                    </div>
                 </div>
-                <h3>Manajemen Produk</h3>
-                <p>Tambah, edit, dan kelola stok buku dengan mudah. Pantau inventaris Anda secara real-time.</p>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="20" x2="18" y2="10"></line>
-                        <line x1="12" y1="20" x2="12" y2="4"></line>
-                        <line x1="6" y1="20" x2="6" y2="14"></line>
-                        <line x1="2" y1="20" x2="22" y2="20"></line>
-                    </svg>
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2730&q=80" alt="Elegant book collection with gold decorative elements">
                 </div>
-                <h3>Analisis Penjualan</h3>
-                <p>Dapatkan insight tren penjualan mingguan & bulanan. Visualisasi data yang mudah dipahami.</p>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <circle cx="12" cy="10" r="3"></circle>
-                        <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z"></path>
-                    </svg>
-                </div>
-                <h3>Tanpa Login</h3>
-                <p>Pemesanan cepat langsung dari halaman landing. Pengalaman berbelanja yang lancar dan mudah.</p>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer>
-            &copy; <span id="currentYear"></span> ZiyadBooks. All rights reserved.
-        </footer>
-    </div>
-
+        </div>
+        <span id="currentYear" style="display: none;"></span>
+    </section>
     <script>
         // Set current year in footer
         document.getElementById('currentYear').textContent = new Date().getFullYear();
@@ -552,68 +550,20 @@
             }
         });
 
-        // Add scroll animation to feature cards
-        const featureCards = document.querySelectorAll('.feature-card');
+        // Mobile menu functionality
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navLinks = document.querySelector('.nav-links');
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, { threshold: 0.1 });
-
-        featureCards.forEach(card => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(50px)';
-            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-            observer.observe(card);
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
         });
 
-        // Create particles
-        const particlesContainer = document.getElementById('particles');
-        const particlesCount = 20;
-
-        for (let i = 0; i < particlesCount; i++) {
-            createParticle();
-        }
-
-        function createParticle() {
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
-
-            // Random position
-            const posX = Math.random() * 100;
-            const posY = Math.random() * 100;
-            particle.style.left = `${posX}%`;
-            particle.style.top = `${posY}%`;
-
-            // Random size
-            const size = Math.random() * 8 + 2;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-
-            // Random opacity
-            particle.style.opacity = Math.random() * 0.2 + 0.1;
-
-            // Animation
-            const duration = Math.random() * 20 + 10;
-            particle.style.animation = `float ${duration}s ease-in-out infinite`;
-            particle.style.animationDelay = `${Math.random() * 5}s`;
-
-            particlesContainer.appendChild(particle);
-        }
-
-        // Spotlight effect
-        const spotlight = document.getElementById('spotlight');
-
-        document.addEventListener('mousemove', (e) => {
-            const x = e.clientX / window.innerWidth * 100;
-            const y = e.clientY / window.innerHeight * 100;
-
-            spotlight.style.setProperty('--x', `${x}%`);
-            spotlight.style.setProperty('--y', `${y}%`);
+        // Add subtle animation to hero image on page load
+        window.addEventListener('load', () => {
+            const heroImage = document.querySelector('.hero-image img');
+            setTimeout(() => {
+                heroImage.style.transform = 'perspective(1000px) rotateY(-5deg)';
+            }, 300);
         });
     </script>
 </body>

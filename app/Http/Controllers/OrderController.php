@@ -2,20 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\OrderItem;
+use App\Models\Order;
+use App\Models\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
     public function index()
     {
-        $orderItems = OrderItem::with(['order', 'product'])->paginate(10);
+        $orders = Order::with(['items.product'])->latest()->paginate(10);
+        return view('orders.index', compact('orders'));
+    }
 
-            // Menyertakan total_price dari Order untuk setiap item
-        foreach ($orderItems as $orderItem) {
-            $orderItem->order->total_price = $orderItem->order->total_price;
-        }
+    public function show(Order $order)
+    {
+        $order->load(['items.product', 'shippingMethod', 'payment']);
+        return view('orders.show', compact('order'));
+    }
 
-        return view('orders.index', compact('orderItems'));
+    public function updateStatus(Request $request, Order $order)
+    {
+        $request->validate([
+            'payment_status' => 'required|in:pending,paid,cancelled',
+            'shipping_status' => 'required|in:proses,dikirim,selesai,dibatalkan',
+        ]);
+
+        $order->payment_status = $request->payment_status;
+        $order->shipping_status = $request->shipping_status;
+        $order->save();
+
+        return redirect()->route('orders.show', $order)->with('success', 'Order status updated successfully');
     }
 }

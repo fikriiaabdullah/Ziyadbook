@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Payment;
 
 class ProductOrderController extends Controller
 {
@@ -20,10 +21,11 @@ class ProductOrderController extends Controller
      */
     public function index()
     {
-        $products = Product::with('category')->where('stock', '>', 0)->latest()->paginate(12);
+        $products = Product::with('category')->where('stock', '>', 0)->latest()->paginate(8);
         $categories = Category::all();
+        $featuredProducts = Product::with('category')->where('stock', '>', 0)->inRandomOrder()->take(4)->get();
 
-        return view('shop.index', compact('products', 'categories'));
+        return view('shop.index', compact('products', 'categories', 'featuredProducts'));
     }
 
     /**
@@ -35,11 +37,17 @@ class ProductOrderController extends Controller
             ->where('category_id', $categoryId)
             ->where('stock', '>', 0)
             ->latest()
-            ->paginate(12);
+            ->paginate(8);
         $categories = Category::all();
         $currentCategory = Category::findOrFail($categoryId);
+        $featuredProducts = Product::with('category')
+            ->where('category_id', $categoryId)
+            ->where('stock', '>', 0)
+            ->inRandomOrder()
+            ->take(4)
+            ->get();
 
-        return view('shop.index', compact('products', 'categories', 'currentCategory'));
+        return view('shop.index', compact('products', 'categories', 'currentCategory', 'featuredProducts'));
     }
 
     /**
@@ -58,9 +66,7 @@ class ProductOrderController extends Controller
         return view('shop.show', compact('product', 'relatedProducts', 'shippingMethods'));
     }
 
-    /**
-     * Store the order directly from product page
-     */
+    // Update the store method to include payment_method
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -70,6 +76,7 @@ class ProductOrderController extends Controller
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
             'shipping_method_id' => 'required|exists:shipping_methods,id',
+            'payment_method' => 'required|in:transfer_bank,cod',
         ]);
 
         if ($validator->fails()) {
@@ -100,7 +107,7 @@ class ProductOrderController extends Controller
             $order->email = $request->email;
             $order->address = $request->address;
             $order->total_price = $total;
-            $order->payment_method = 'transfer_bank'; // Default method
+            $order->payment_method = $request->payment_method;
             $order->payment_status = 'pending';
             $order->shipping_status = 'proses';
             $order->shipping_method_id = $request->shipping_method_id;
@@ -141,5 +148,37 @@ class ProductOrderController extends Controller
     {
         $order = Order::with(['items.product', 'shippingMethod'])->findOrFail($orderId);
         return view('shop.order-success', compact('order'));
+    }
+
+    // Add this method to handle payment proof upload
+    public function uploadPaymentProof(Request $request, Order $order)
+    {
+        $request->validate([
+            'payment_proof' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        try {
+            if ($request->hasFile('payment_proof')) {
+                $file = $request->file('payment_proof');
+                $filename = 'payment_proof_' . $order->id . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs('payments', $filename, 'public');
+
+                // Create or update payment record
+                $payment = Payment::updateOrCreate(
+                    ['order_id' => $order->id],
+                    [
+                        'method' => 'transfer_bank',
+                        'status' => 'pending',
+                        'proof' => 'storage/' . $path
+                    ]
+                );
+
+                return redirect()->back()->with('success', 'Payment proof uploaded successfully. We will verify your payment shortly.');
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to upload payment proof: ' . $e->getMessage());
+        }
+
+        return redirect()->back()->with('error', 'Failed to upload payment proof.');
     }
 }

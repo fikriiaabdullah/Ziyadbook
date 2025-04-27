@@ -1,392 +1,200 @@
+// Quantity buttons functionality
 document.addEventListener("DOMContentLoaded", () => {
-    // Mock data for productData and shippingMethods
-    const productData = {
-      price: 100000, // Example price
-    }
-
-    const shippingMethods = [
-      { id: 1, name: "Standard Shipping", price: 15000 },
-      { id: 2, name: "Express Shipping", price: 30000 },
-    ]
-
-    // Mobile menu toggle
-    const mobileMenuButton = document.getElementById("mobile-menu-button")
-    const closeMobileMenu = document.getElementById("close-mobile-menu")
-    const mobileMenu = document.getElementById("mobile-menu")
-    const mobileMenuOverlay = document.getElementById("mobile-menu-overlay")
-
-    if (mobileMenuButton && closeMobileMenu && mobileMenu && mobileMenuOverlay) {
-      mobileMenuButton.addEventListener("click", () => {
-        mobileMenu.classList.add("open")
-        mobileMenuOverlay.classList.remove("hidden")
-        document.body.style.overflow = "hidden"
-      })
-
-      closeMobileMenu.addEventListener("click", () => {
-        mobileMenu.classList.remove("open")
-        mobileMenuOverlay.classList.add("hidden")
-        document.body.style.overflow = ""
-      })
-
-      mobileMenuOverlay.addEventListener("click", () => {
-        mobileMenu.classList.remove("open")
-        mobileMenuOverlay.classList.add("hidden")
-        document.body.style.overflow = ""
-      })
-    }
-
-    // Product tabs
-    const tabButtons = document.querySelectorAll(".product-tab-btn")
-    const tabContents = document.querySelectorAll(".product-tab-content")
-
-    tabButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        // Remove active class from all buttons
-        tabButtons.forEach((btn) => {
-          btn.classList.remove("active-tab", "text-blue-600", "border-b-2", "border-blue-600")
-          btn.classList.add("text-gray-500", "hover:text-gray-700")
-        })
-
-        // Add active class to clicked button
-        button.classList.add("active-tab", "text-blue-600", "border-b-2", "border-blue-600")
-        button.classList.remove("text-gray-500", "hover:text-gray-700")
-
-        // Hide all tab contents
-        tabContents.forEach((content) => {
-          content.classList.add("hidden")
-        })
-
-        // Show the corresponding tab content
-        const tabId = button.getAttribute("data-tab")
-        const activeTab = document.getElementById(`${tabId}-tab`)
-        if (activeTab) {
-          activeTab.classList.remove("hidden")
-        }
-      })
-    })
-
-    // FAQ accordion
-    const faqQuestions = document.querySelectorAll(".faq-question")
-    faqQuestions.forEach((question) => {
-      question.addEventListener("click", () => {
-        const answer = question.nextElementSibling
-        const icon = question.querySelector(".fa-chevron-down")
-
-        // Toggle the answer visibility
-        answer.classList.toggle("hidden")
-
-        // Toggle the icon rotation
-        if (icon) {
-          icon.classList.toggle("transform")
-          icon.classList.toggle("rotate-180")
-        }
-
-        // Update aria-expanded
-        const isExpanded = answer.classList.contains("hidden") ? "false" : "true"
-        question.setAttribute("aria-expanded", isExpanded)
-      })
-    })
-
-    // Quantity selector
+    // Check if we're on a product detail page with quantity buttons
     const decreaseBtn = document.getElementById("decrease-qty")
     const increaseBtn = document.getElementById("increase-qty")
     const quantityInput = document.getElementById("quantity")
-    const formQuantityInput = document.getElementById("form-quantity")
-    const summaryQuantity = document.getElementById("summary-quantity")
-    const summaryQuantityBadge = document.getElementById("summary-quantity-badge")
 
     if (decreaseBtn && increaseBtn && quantityInput) {
+      const maxStock = Number.parseInt(quantityInput.getAttribute("max") || "999")
+
       decreaseBtn.addEventListener("click", () => {
-        let value = Number.parseInt(quantityInput.value)
-        if (value > 1) {
-          value--
-          quantityInput.value = value
-          if (formQuantityInput) formQuantityInput.value = value
-          if (summaryQuantity) summaryQuantity.textContent = value
-          if (summaryQuantityBadge) summaryQuantityBadge.textContent = value
-          updateSummary()
+        const currentValue = Number.parseInt(quantityInput.value)
+        if (currentValue > 1) {
+          quantityInput.value = currentValue - 1
         }
       })
 
       increaseBtn.addEventListener("click", () => {
-        let value = Number.parseInt(quantityInput.value)
-        const max = Number.parseInt(quantityInput.getAttribute("max") || 999)
-        if (value < max) {
-          value++
-          quantityInput.value = value
-          if (formQuantityInput) formQuantityInput.value = value
-          if (summaryQuantity) summaryQuantity.textContent = value
-          if (summaryQuantityBadge) summaryQuantityBadge.textContent = value
-          updateSummary()
+        const currentValue = Number.parseInt(quantityInput.value)
+        if (currentValue < maxStock) {
+          quantityInput.value = currentValue + 1
+        }
+      })
+    }
+
+    // Payment method toggle
+    const paymentTransfer = document.getElementById("payment_transfer")
+    const paymentCod = document.getElementById("payment_cod")
+    const bankTransferDetails = document.getElementById("bank_transfer_details")
+    const codDetails = document.getElementById("cod_details")
+
+    if (paymentTransfer && paymentCod && bankTransferDetails && codDetails) {
+      paymentTransfer.addEventListener("change", function () {
+        if (this.checked) {
+          bankTransferDetails.style.display = "block"
+          codDetails.style.display = "none"
         }
       })
 
-      quantityInput.addEventListener("change", () => {
-        let value = Number.parseInt(quantityInput.value)
-        const max = Number.parseInt(quantityInput.getAttribute("max") || 999)
-
-        if (isNaN(value) || value < 1) {
-          value = 1
-        } else if (value > max) {
-          value = max
+      paymentCod.addEventListener("change", function () {
+        if (this.checked) {
+          bankTransferDetails.style.display = "none"
+          codDetails.style.display = "block"
         }
-
-        quantityInput.value = value
-        if (formQuantityInput) formQuantityInput.value = value
-        if (summaryQuantity) summaryQuantity.textContent = value
-        if (summaryQuantityBadge) summaryQuantityBadge.textContent = value
-        updateSummary()
       })
     }
 
-    // Update order summary
-    function updateSummary() {
-      const productPrice = productData.price
-      const quantity = Number.parseInt(document.getElementById("quantity").value)
-      const subtotal = productPrice * quantity
+    // Form submission for COD orders
+    const orderForm = document.getElementById("order-form")
+    if (orderForm && paymentCod) {
+      orderForm.addEventListener("submit", (e) => {
+        if (paymentCod.checked) {
+          e.preventDefault()
+          // Get form data
+          const formData = new FormData(orderForm)
+          const userName = formData.get("user_name")
+          const productName = document.querySelector(".text-2xl.font-bold.text-gray-900").textContent
+          const quantity = formData.get("quantity")
+          const address = formData.get("address")
 
-      const subtotalEl = document.getElementById("summary-subtotal")
-      const taxEl = document.getElementById("summary-tax")
+          // Create WhatsApp message
+          const message = `Hello, I would like to place a COD order:\n\nName: ${userName}\nProduct: ${productName}\nQuantity: ${quantity}\nAddress: ${address}\n\nPlease confirm my order. Thank you!`
+          const encodedMessage = encodeURIComponent(message)
 
-      if (subtotalEl) {
-        subtotalEl.textContent = "Rp " + subtotal.toLocaleString("id-ID")
-      }
-
-      if (taxEl) {
-        const tax = subtotal * 0.1
-        taxEl.textContent = "Rp " + tax.toLocaleString("id-ID")
-      }
-
-      updateTotal()
-    }
-
-    // Update total when shipping method changes
-    const shippingRadios = document.querySelectorAll(".shipping-method-radio")
-    const shippingLabels = document.querySelectorAll(".shipping-method-label")
-
-    shippingRadios.forEach((radio, index) => {
-      radio.addEventListener("change", () => {
-        // Update styles for all labels
-        shippingLabels.forEach((label) => {
-          label.classList.remove("border-blue-500", "bg-blue-50")
-          label.classList.add("border-gray-300")
-        })
-
-        // Update style for selected label
-        shippingLabels[index].classList.remove("border-gray-300")
-        shippingLabels[index].classList.add("border-blue-500", "bg-blue-50")
-
-        // Update shipping cost and total
-        updateShippingCost()
-      })
-    })
-
-    function updateShippingCost() {
-      const selectedShipping = document.querySelector('input[name="shipping_method_id"]:checked')
-      const shippingPriceEl = document.getElementById("summary-shipping")
-
-      if (selectedShipping && shippingPriceEl) {
-        const shippingId = Number.parseInt(selectedShipping.value)
-        const shippingMethod = shippingMethods.find((method) => method.id === shippingId)
-
-        if (shippingMethod) {
-          shippingPriceEl.textContent = "Rp " + shippingMethod.price.toLocaleString("id-ID")
+          // Open WhatsApp with pre-filled message
+          window.open(`https://wa.me/6281234567890?text=${encodedMessage}`, "_blank")
         }
-      }
-
-      updateTotal()
-    }
-
-    function updateTotal() {
-      const productPrice = productData.price
-      const quantity = Number.parseInt(document.getElementById("quantity").value)
-      const subtotal = productPrice * quantity
-      const tax = subtotal * 0.1
-
-      // Get shipping cost
-      let shippingCost = 0
-      const selectedShipping = document.querySelector('input[name="shipping_method_id"]:checked')
-
-      if (selectedShipping) {
-        const shippingId = Number.parseInt(selectedShipping.value)
-        const shippingMethod = shippingMethods.find((method) => method.id === shippingId)
-
-        if (shippingMethod) {
-          shippingCost = Number.parseFloat(shippingMethod.price)
-        }
-      }
-
-      // Calculate total as numbers to avoid string concatenation issues
-      const total = subtotal + tax + shippingCost
-      const totalEl = document.getElementById("summary-total")
-
-      if (totalEl) {
-        totalEl.textContent = "Rp " + total.toLocaleString("id-ID")
-      }
-
-      // Also update shipping display to ensure consistent formatting
-      const shippingPriceEl = document.getElementById("summary-shipping")
-      if (shippingPriceEl && shippingCost > 0) {
-        shippingPriceEl.textContent = "Rp " + shippingCost.toLocaleString("id-ID")
-      }
-    }
-
-    // Initialize shipping information
-    updateShippingCost()
-
-    // Toggle checkout form
-    const orderNowBtn = document.getElementById("order-now-btn")
-    const checkoutForm = document.getElementById("checkout-form-container")
-    const cancelCheckoutBtn = document.getElementById("cancel-checkout-btn")
-
-    if (orderNowBtn && checkoutForm && cancelCheckoutBtn) {
-      orderNowBtn.addEventListener("click", () => {
-        checkoutForm.classList.remove("hidden")
-        window.scrollTo({
-          top: checkoutForm.offsetTop - 100,
-          behavior: "smooth",
-        })
-      })
-
-      cancelCheckoutBtn.addEventListener("click", () => {
-        checkoutForm.classList.add("hidden")
       })
     }
 
-    // Notify me modal
-    const notifyMeBtn = document.getElementById("notify-me-btn")
-    const notifyModal = document.getElementById("notify-modal")
-    const closeNotifyModal = document.getElementById("close-notify-modal")
-    const notifyForm = document.getElementById("notify-form")
+    // Image preview for file inputs
+    const imageInput = document.getElementById("image")
+    const imagePreview = document.getElementById("imagePreview")
+    const inputWrapper = document.getElementById("imageInputWrapper")
 
-    if (notifyMeBtn && notifyModal && closeNotifyModal && notifyForm) {
-      notifyMeBtn.addEventListener("click", () => {
-        notifyModal.classList.remove("hidden")
-      })
+    if (imageInput && imagePreview) {
+      imageInput.addEventListener("change", (e) => {
+        const [file] = e.target.files
+        if (file) {
+          imagePreview.src = URL.createObjectURL(file)
+          imagePreview.classList.remove("hidden")
 
-      closeNotifyModal.addEventListener("click", () => {
-        notifyModal.classList.add("hidden")
-      })
-
-      notifyForm.addEventListener("submit", (e) => {
-        e.preventDefault()
-
-        // Simulate form submission
-        const submitBtn = notifyForm.querySelector('button[type="submit"]')
-        const originalText = submitBtn.innerHTML
-
-        submitBtn.innerHTML = '<i class="fas fa-spinner spinner mr-2"></i> Mengirim...'
-        submitBtn.disabled = true
-
-        setTimeout(() => {
-          notifyModal.classList.add("hidden")
-
-          Toastify({
-            text: "Terima kasih! Kami akan memberi tahu Anda saat produk tersedia.",
-            duration: 3000,
-            gravity: "top",
-            position: "center",
-            backgroundColor: "#4CAF50",
-            stopOnFocus: true,
-          }).showToast()
-
-          // Reset form
-          notifyForm.reset()
-          submitBtn.innerHTML = originalText
-          submitBtn.disabled = false
-        }, 1500)
-      })
-    }
-
-    // Image gallery
-    const galleryThumbs = document.querySelectorAll(".image-gallery-thumb")
-    const mainImage = document.getElementById("main-product-image")
-
-    if (galleryThumbs.length > 0 && mainImage) {
-      galleryThumbs.forEach((thumb) => {
-        thumb.addEventListener("click", () => {
-          // Update active thumbnail
-          galleryThumbs.forEach((t) => {
-            t.classList.remove("active", "border-blue-400")
-            t.classList.add("border-gray-200")
-          })
-
-          thumb.classList.add("active", "border-blue-400")
-          thumb.classList.remove("border-gray-200")
-
-          // Update main image
-          const imgSrc = thumb.getAttribute("data-src")
-          if (imgSrc) {
-            mainImage.src = imgSrc
+          if (inputWrapper) {
+            inputWrapper.classList.add("hidden")
           }
-        })
-      })
-    }
-
-    // Back to top button
-    const backToTopButton = document.getElementById("back-to-top")
-
-    if (backToTopButton) {
-      window.addEventListener("scroll", () => {
-        if (window.pageYOffset > 300) {
-          backToTopButton.classList.remove("opacity-0")
-          backToTopButton.classList.add("opacity-100")
-        } else {
-          backToTopButton.classList.remove("opacity-100")
-          backToTopButton.classList.add("opacity-0")
         }
-      })
-
-      backToTopButton.addEventListener("click", () => {
-        window.scrollTo({
-          top: 0,
-          behavior: "smooth",
-        })
-      })
-    }
-
-    // Add to cart button (simulated)
-    const addToCartBtn = document.getElementById("add-to-cart-btn")
-
-    if (addToCartBtn) {
-      addToCartBtn.addEventListener("click", () => {
-        Toastify({
-          text: "Produk telah ditambahkan ke wishlist!",
-          duration: 3000,
-          gravity: "top",
-          position: "right",
-          backgroundColor: "#3B82F6",
-          stopOnFocus: true,
-        }).showToast()
-      })
-    }
-
-    // Quick view modal (simulated)
-    const quickViewModal = document.getElementById("quick-view-modal")
-    const closeQuickView = document.getElementById("close-quick-view")
-
-    if (quickViewModal && closeQuickView) {
-      closeQuickView.addEventListener("click", () => {
-        quickViewModal.classList.add("hidden")
-      })
-    }
-
-    // Image zoom effect
-    const zoomContainer = document.querySelector(".zoom-container")
-    const zoomImage = zoomContainer ? zoomContainer.querySelector("img") : null
-
-    if (zoomContainer && zoomImage) {
-      zoomContainer.addEventListener("mousemove", (e) => {
-        const { left, top, width, height } = zoomContainer.getBoundingClientRect()
-        const x = (e.clientX - left) / width
-        const y = (e.clientY - top) / height
-
-        zoomImage.style.transformOrigin = `${x * 100}% ${y * 100}%`
-        zoomImage.style.transform = "scale(1.5)"
-      })
-
-      zoomContainer.addEventListener("mouseleave", () => {
-        zoomImage.style.transform = "scale(1)"
       })
     }
   })
+
+  // Welcome page theme toggle functionality
+  function initWelcomePage() {
+    const themeToggle = document.getElementById("themeToggle")
+    if (!themeToggle) return
+
+    const moon = document.querySelector(".moon")
+    const sun = document.querySelector(".sun")
+
+    // Check for saved theme preference or use user's system preference
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches
+
+    if (localStorage.getItem("theme") === "dark" || (!localStorage.getItem("theme") && prefersDark)) {
+      document.body.classList.add("dark")
+      moon.style.display = "none"
+      sun.style.display = "block"
+    }
+
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark")
+
+      if (document.body.classList.contains("dark")) {
+        localStorage.setItem("theme", "dark")
+        moon.style.display = "none"
+        sun.style.display = "block"
+      } else {
+        localStorage.setItem("theme", "light")
+        moon.style.display = "block"
+        sun.style.display = "none"
+      }
+    })
+
+    // Mobile menu functionality
+    const mobileMenuBtn = document.querySelector(".mobile-menu-btn")
+    const navLinks = document.querySelector(".nav-links")
+
+    if (mobileMenuBtn && navLinks) {
+      mobileMenuBtn.addEventListener("click", () => {
+        navLinks.classList.toggle("active")
+      })
+    }
+
+    // Set current year in footer
+    const currentYearElement = document.getElementById("currentYear")
+    if (currentYearElement) {
+      currentYearElement.textContent = new Date().getFullYear()
+    }
+  }
+
+  // Initialize welcome page if needed
+  document.addEventListener("DOMContentLoaded", () => {
+    if (document.body.classList.contains("welcome-page")) {
+      initWelcomePage()
+    }
+  })
+
+  // Quick date selector functionality for dashboard
+  function setQuickDate(period) {
+    if (!period) return
+
+    const today = new Date()
+    let startDate = new Date()
+    let endDate = new Date()
+
+    switch (period) {
+      case "today":
+        // Keep start and end as today
+        break
+      case "yesterday":
+        startDate.setDate(today.getDate() - 1)
+        endDate.setDate(today.getDate() - 1)
+        break
+      case "this_week":
+        startDate.setDate(today.getDate() - today.getDay())
+        break
+      case "last_week":
+        startDate.setDate(today.getDate() - today.getDay() - 7)
+        endDate.setDate(today.getDate() - today.getDay() - 1)
+        break
+      case "this_month":
+        startDate.setDate(1)
+        break
+      case "last_month":
+        startDate = new Date(today.getFullYear(), today.getMonth() - 1, 1)
+        endDate = new Date(today.getFullYear(), today.getMonth(), 0)
+        break
+      case "this_year":
+        startDate = new Date(today.getFullYear(), 0, 1)
+        break
+    }
+
+    // Format dates for input fields
+    const startDateInput = document.getElementById("start_date")
+    const endDateInput = document.getElementById("end_date")
+
+    if (startDateInput && endDateInput) {
+      startDateInput.value = formatDate(startDate)
+      endDateInput.value = formatDate(endDate)
+
+      // Submit form
+      const form = document.querySelector("form")
+      if (form) form.submit()
+    }
+  }
+
+  function formatDate(date) {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, "0")
+    const day = String(date.getDate()).padStart(2, "0")
+    return `${year}-${month}-${day}`
+  }

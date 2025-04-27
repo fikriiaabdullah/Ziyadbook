@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="min-h-screen bg-gray-100" x-data="{ sidebarOpen: true }">
         <div class="flex">
-            <x-sidebar active="order-items" />
+            <x-sidebar active="orders" />
             <div class="flex flex-col flex-1 transition-all duration-300 ease-in-out"
                  :class="{'pl-64': sidebarOpen, 'pl-0': !sidebarOpen}">
 
@@ -19,52 +19,80 @@
                         </button>
 
                         <h2 class="text-xl font-semibold text-gray-800">
-                            Order Items
+                            Orders Management
                         </h2>
                     </div>
                 </header>
 
                 <main class="flex-1 overflow-y-auto py-6 px-4 sm:px-6 lg:px-8">
+                    @if(session('success'))
+                        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6" role="alert">
+                            <p>{{ session('success') }}</p>
+                        </div>
+                    @endif
+
                     <div class="bg-white shadow-md rounded-lg overflow-hidden">
                         <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200">
-                            <h3 class="text-lg font-medium text-gray-900">All Order Items</h3>
+                            <h3 class="text-lg font-medium text-gray-900">All Orders</h3>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Orderer</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Shipping Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
-                                    @forelse ($orderItems as $item)
+                                    @forelse ($orders as $order)
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ $item->order->user_name ?? 'N/A' }}
+                                            #{{ $order->id }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ $item->product->name ?? 'N/A' }}
+                                            {{ $order->user_name }}<br>
+                                            <span class="text-gray-500 text-xs">{{ $order->email }}</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ $item->quantity }}
+                                            Rp {{ number_format($order->total_price, 0, ',', '.') }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            Rp {{ number_format($item->order->total_price, 0, ',', '.') ?? 'N/A' }}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                {{ $order->payment_status == 'paid' ? 'bg-green-100 text-green-800' :
+                                                   ($order->payment_status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                                                {{ ucfirst($order->payment_status) }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                {{ $order->shipping_status == 'selesai' ? 'bg-green-100 text-green-800' :
+                                                   ($order->shipping_status == 'dikirim' ? 'bg-blue-100 text-blue-800' :
+                                                   ($order->shipping_status == 'proses' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800')) }}">
+                                                {{ ucfirst($order->shipping_status) }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ $order->created_at->format('d M Y H:i') }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <a href="{{ route('orders.show', $order) }}" class="text-indigo-600 hover:text-indigo-900">View Details</a>
                                         </td>
                                     </tr>
                                     @empty
                                     <tr>
-                                        <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-500">No order items found.</td>
+                                        <td colspan="7" class="px-6 py-4 text-center text-sm text-gray-500">No orders found.</td>
                                     </tr>
                                     @endforelse
                                 </tbody>
                             </table>
                         </div>
                         <div class="px-6 py-4 border-t border-gray-200">
-                            {{ $orderItems->links() }}
+                            {{ $orders->links() }}
                         </div>
                     </div>
                 </main>
