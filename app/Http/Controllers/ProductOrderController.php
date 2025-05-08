@@ -7,7 +7,7 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
-use App\Models\ShippingMethod;
+use App\Services\RajaOngkirService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -16,6 +16,13 @@ use App\Models\Payment;
 
 class ProductOrderController extends Controller
 {
+    protected $rajaOngkirService;
+
+    public function __construct(RajaOngkirService $rajaOngkirService)
+    {
+        $this->rajaOngkirService = $rajaOngkirService;
+    }
+
     /**
      * Display the catalog of products
      */
@@ -61,21 +68,37 @@ class ProductOrderController extends Controller
             ->where('stock', '>', 0)
             ->limit(4)
             ->get();
-        $shippingMethods = ShippingMethod::all();
 
-        return view('shop.show', compact('product', 'relatedProducts', 'shippingMethods'));
+        // Get provinces for shipping form
+        $provinces = $this->rajaOngkirService->getProvinces();
+
+        // Default origin city (store location) - you should set this in your .env or config
+        $originCity = env('RAJAONGKIR_ORIGIN_CITY', '501'); // Jakarta Pusat by default
+
+        // Available couriers
+        $couriers = [
+            'jne' => 'JNE',
+            'pos' => 'POS Indonesia',
+            'tiki' => 'TIKI'
+        ];
+
+        return view('shop.show', compact('product', 'relatedProducts', 'provinces', 'originCity', 'couriers'));
     }
 
-    // Update the store method to include payment_method
+    // Update the store method to include RajaOngkir shipping details
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'user_name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'address' => 'required|string',
+            'province_id' => 'required|numeric',
+            'city_id' => 'required|numeric',
+            'courier' => 'required|in:jne,pos,tiki',
+            'courier_service' => 'required|string',
+            'shipping_cost' => 'required|numeric',
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
-            'shipping_method_id' => 'required|exists:shipping_methods,id',
             'payment_method' => 'required|in:transfer_bank,cod',
         ]);
 
@@ -85,7 +108,6 @@ class ProductOrderController extends Controller
 
         // Get the product
         $product = Product::findOrFail($request->product_id);
-        $shippingMethod = ShippingMethod::findOrFail($request->shipping_method_id);
 
         // Check stock availability again
         if ($product->stock < $request->quantity) {
@@ -96,7 +118,7 @@ class ProductOrderController extends Controller
 
         // Calculate total price
         $subtotal = $product->price * $request->quantity;
-        $total = $subtotal + $shippingMethod->price;
+        $total = $subtotal + $request->shipping_cost;
 
         DB::beginTransaction();
 
@@ -106,11 +128,15 @@ class ProductOrderController extends Controller
             $order->user_name = $request->user_name;
             $order->email = $request->email;
             $order->address = $request->address;
+            $order->province_id = $request->province_id;
+            $order->city_id = $request->city_id;
+            $order->courier = $request->courier;
+            $order->courier_service = $request->courier_service;
+            $order->shipping_cost = $request->shipping_cost;
             $order->total_price = $total;
             $order->payment_method = $request->payment_method;
             $order->payment_status = 'pending';
             $order->shipping_status = 'proses';
-            $order->shipping_method_id = $request->shipping_method_id;
             $order->save();
 
             // Create order item
@@ -146,8 +172,13 @@ class ProductOrderController extends Controller
      */
     public function success($orderId)
     {
-        $order = Order::with(['items.product', 'shippingMethod'])->findOrFail($orderId);
-        return view('shop.order-success', compact('order'));
+        $order = Order::with(['items.product'])->findOrFail($orderId);
+
+        // Get province and city names
+        $provinceName = $this->rajaOngkirService->getProvinceName($order->province_id);
+        $cityName = $this->rajaOngkirService->getCityName($order->city_id);
+
+        return view('shop.order-success', compact('order', 'provinceName', 'cityName'));
     }
 
     // Add this method to handle payment proof upload

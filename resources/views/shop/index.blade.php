@@ -1,97 +1,114 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ isset($currentCategory) ? $currentCategory->name : 'Katalog Buku' }} | ZiyadBook</title>
-    <meta name="description" content="Temukan koleksi buku berkualitas dengan harga terbaik">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="ZiyadBooks - Temukan buku favorit Anda dengan koleksi premium kami">
+    <title>{{ isset($currentCategory) ? $currentCategory->name : 'Katalog Buku' }} | ZiyadBooks</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="{{ asset('css/shop.css') }}" rel="stylesheet">
 </head>
 <body>
-    <header class="bg-white shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex justify-between items-center">
-                <!-- Logo and Brand Name -->
-                <div class="flex items-center space-x-2">
-                    <h1 class="text-2xl font-bold text-blue-600">
-                        <a href="{{ route('shop.products.index') }}" class="flex items-center">
-                            ZiyadBook
-                        </a>
-                    </h1>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <a href="#" class="text-gray-600 hover:text-blue-600 transition">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                    </a>
-                </div>
+    <header id="header">
+        <div class="header-container container">
+            <a href="/" class="logo">
+                ZiyadBook
+            </a>
+            <div class="nav-links">
+                <a href="{{ route('shop.products.index') }}" class="nav-link">Shop</a>
+                <a href="#categories" class="nav-link">Categories</a>
+                <a href="#products" class="nav-link">All Books</a>
             </div>
+            <div class="flex items-center gap-4">
+                <a href="#" class="cart-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                </a>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open mobile menu">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
         </div>
     </header>
 
+    <div class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-header">
+            <a href="/" class="logo">
+                ZiyadBook
+            </a>
+            <button class="close-menu" id="closeMenu" aria-label="Close mobile menu">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="mobile-nav-links">
+            <a href="{{ route('shop.products.index') }}" class="mobile-nav-link">Shop</a>
+            <a href="#categories" class="mobile-nav-link">Categories</a>
+            <a href="#products" class="mobile-nav-link">All Books</a>
+        </div>
+    </div>
+
     <main>
         <!-- Hero Section -->
-        <section class="bg-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                    <div>
-                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                            Find Your Perfect Book<br>at ZiyadBook
-                        </h2>
-                        <p class="text-gray-600 mb-6">
-                            Discover a vast collection of books across various genres. Quality books at affordable prices.
-                        </p>
-                        <div class="flex space-x-4">
-                            <a href="#products" class="btn-primary">
-                                Shop Now
-                            </a>
-                            <a href="#categories" class="btn-outline">
-                                Categories
-                            </a>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-grid">
+                    <div class="hero-content">
+                        <h2 class="hero-title">Find Your Perfect Book at ZiyadBook</h2>
+                        <p class="hero-subtitle">Discover a vast collection of books across various genres. Quality books at affordable prices.</p>
+                        <div class="hero-buttons">
+                            <a href="#products" class="btn btn-primary">Shop Now</a>
+                            <a href="#categories" class="btn btn-secondary">Browse Categories</a>
                         </div>
                     </div>
-                    <div class="flex justify-center">
-                        <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
-                             alt="Stack of books"
-                             class="rounded-lg shadow-lg max-w-full h-auto">
+                    <div class="hero-image">
+                        <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Stack of books">
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Featured Books Section -->
-        <section class="py-12 bg-gray-50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-8">Featured Books</h2>
+        <section class="section section-dark">
+            <div class="container">
+                <h2 class="section-title">Featured Books</h2>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="books-grid">
                     @foreach($featuredProducts as $product)
-                    <div class="book-card bg-white rounded-lg overflow-hidden shadow">
-                        <a href="{{ route('shop.products.show', $product->id) }}">
-                            <div class="h-48 overflow-hidden">
-                                @if($product->image)
-                                <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
-                                @else
-                                <div class="w-full h-full bg-gray-200 flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                    </svg>
-                                </div>
-                                @endif
+                    <div class="book-card">
+                        <a href="{{ route('shop.products.show', $product->id) }}" class="book-image">
+                            @if($product->image)
+                            <img src="{{ asset($product->image) }}" alt="{{ $product->name }}">
+                            @else
+                            <div class="w-full h-full flex items-center justify-center bg-gray-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #cbd5e0;">
+                                    <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
                             </div>
+                            @endif
                         </a>
-                        <div class="p-4">
-                            <div class="text-xs text-blue-600 mb-1">{{ $product->category->name ?? 'Uncategorized' }}</div>
-                            <h3 class="font-medium text-gray-900 mb-2 line-clamp-2 h-12">{{ $product->name }}</h3>
-                            <p class="text-gray-600 text-sm mb-3 line-clamp-2 h-10">
+                        <div class="book-content">
+                            <div class="book-category">{{ $product->category->name ?? 'Uncategorized' }}</div>
+                            <h3 class="book-title">{{ $product->name }}</h3>
+                            <p class="book-description">
                                 {{ \Illuminate\Support\Str::limit($product->description, 60) }}
                             </p>
-                            <div class="flex justify-between items-center">
-                                <span class="font-bold text-gray-900">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
-                                <a href="{{ route('shop.products.show', $product->id) }}" class="text-sm text-blue-600 hover:text-blue-800">
+                            <div class="book-footer">
+                                <span class="book-price">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                                <a href="{{ route('shop.products.show', $product->id) }}" class="btn btn-sm btn-secondary">
                                     Add to Cart
                                 </a>
                             </div>
@@ -103,20 +120,19 @@
         </section>
 
         <!-- Browse Categories -->
-        <section id="categories" class="py-12 bg-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-8">Browse Categories</h2>
+        <section id="categories" class="section section-light">
+            <div class="container">
+                <h2 class="section-title">Browse Categories</h2>
 
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="categories-grid">
                     @foreach($categories as $category)
-                    <a href="{{ route('shop.products.category', $category->id) }}"
-                       class="category-card flex flex-col items-center p-6 border border-gray-200 rounded-lg">
-                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    <a href="{{ route('shop.products.category', $category->id) }}" class="category-card">
+                        <div class="category-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
                             </svg>
                         </div>
-                        <span class="text-gray-900 font-medium">{{ $category->name }}</span>
+                        <span class="category-name">{{ $category->name }}</span>
                     </a>
                     @endforeach
                 </div>
@@ -124,17 +140,18 @@
         </section>
 
         <!-- All Products Section -->
-        <section id="products" class="py-12 bg-gray-50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-2xl font-bold text-gray-900">
+        <section id="products" class="section section-dark">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
                         {{ isset($currentCategory) ? $currentCategory->name : 'All Books' }}
                     </h2>
 
                     @if(isset($currentCategory))
-                    <a href="{{ route('shop.products.index') }}" class="text-blue-600 hover:text-blue-800 flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    <a href="{{ route('shop.products.index') }}" class="back-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 12H5"></path>
+                            <path d="M12 19l-7-7 7-7"></path>
                         </svg>
                         Back to All Books
                     </a>
@@ -142,44 +159,42 @@
                 </div>
 
                 @if(session('error'))
-                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
+                <div class="alert alert-error">
                     <p>{{ session('error') }}</p>
                 </div>
                 @endif
 
                 @if($products->isEmpty())
-                <div class="bg-white rounded-lg shadow p-8 text-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="empty-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <p class="text-gray-600">No books available at the moment.</p>
+                    <p class="empty-text">No books available at the moment.</p>
                 </div>
                 @else
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="books-grid">
                     @foreach($products as $product)
-                    <div class="book-card bg-white rounded-lg overflow-hidden shadow">
-                        <a href="{{ route('shop.products.show', $product->id) }}">
-                            <div class="h-48 overflow-hidden">
-                                @if($product->image)
-                                <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
-                                @else
-                                <div class="w-full h-full bg-gray-200 flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                    </svg>
-                                </div>
-                                @endif
+                    <div class="book-card">
+                        <a href="{{ route('shop.products.show', $product->id) }}" class="book-image">
+                            @if($product->image)
+                            <img src="{{ asset($product->image) }}" alt="{{ $product->name }}">
+                            @else
+                            <div class="w-full h-full flex items-center justify-center bg-gray-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #cbd5e0;">
+                                    <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
                             </div>
+                            @endif
                         </a>
-                        <div class="p-4">
-                            <div class="text-xs text-blue-600 mb-1">{{ $product->category->name ?? 'Uncategorized' }}</div>
-                            <h3 class="font-medium text-gray-900 mb-2 line-clamp-2 h-12">{{ $product->name }}</h3>
-                            <p class="text-gray-600 text-sm mb-3 line-clamp-2 h-10">
+                        <div class="book-content">
+                            <div class="book-category">{{ $product->category->name ?? 'Uncategorized' }}</div>
+                            <h3 class="book-title">{{ $product->name }}</h3>
+                            <p class="book-description">
                                 {{ \Illuminate\Support\Str::limit($product->description, 60) }}
                             </p>
-                            <div class="flex justify-between items-center">
-                                <span class="font-bold text-gray-900">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
-                                <a href="{{ route('shop.products.show', $product->id) }}" class="text-sm text-blue-600 hover:text-blue-800">
+                            <div class="book-footer">
+                                <span class="book-price">Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                                <a href="{{ route('shop.products.show', $product->id) }}" class="btn btn-sm btn-secondary">
                                     Add to Cart
                                 </a>
                             </div>
@@ -188,7 +203,7 @@
                     @endforeach
                 </div>
 
-                <div class="mt-8">
+                <div class="pagination">
                     {{ $products->links() }}
                 </div>
                 @endif

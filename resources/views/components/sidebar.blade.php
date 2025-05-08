@@ -53,15 +53,15 @@
                 Orders
             </a>
 
-            <!-- Shipping Methods -->
-            <a href="{{ route('shipping.index') }}"
+            <!-- Category -->
+            <a href="{{ route('category.index') }}"
                 class="flex items-center px-2 py-3 text-sm font-medium rounded-md
-                {{ $currentRoute === 'shipping.index' ? 'text-white bg-indigo-900' : 'text-indigo-100 hover:text-white hover:bg-indigo-700' }}">
+                {{ $currentRoute === 'category.index' ? 'text-white bg-indigo-900' : 'text-indigo-100 hover:text-white hover:bg-indigo-700' }}">
                 <svg class="mr-3 h-5 w-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
                 </svg>
-                Shipping Method
+                Category
             </a>
         </div>
     </nav>

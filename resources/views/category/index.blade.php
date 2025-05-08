@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="min-h-screen bg-gray-100" x-data="{ sidebarOpen: true }">
         <div class="flex">
-            <x-sidebar active="shipping" />
+            <x-sidebar active="category" />
             <div class="flex flex-col flex-1 transition-all duration-300 ease-in-out"
                 :class="{'pl-64': sidebarOpen, 'pl-0': !sidebarOpen}">
 
@@ -20,7 +20,7 @@
                             </svg>
                         </button>
                         <h2 class="text-xl font-semibold text-gray-800">
-                            {{ $title ?? 'Shipping Methods' }}
+                            {{ $title ?? 'Categories' }}
                         </h2>
                     </div>
                 </header>
@@ -35,10 +35,10 @@
 
                     <div class="bg-white shadow-md rounded-lg overflow-hidden">
                         <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200">
-                            <h3 class="text-lg font-medium text-gray-900">All Shipping Methods</h3>
-                            <a href="{{ route('shipping.create') }}"
+                            <h3 class="text-lg font-medium text-gray-900">All Categories</h3>
+                            <a href="{{ route('category.create') }}"
                                 class="px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 active:bg-indigo-700 focus:outline-none focus:border-indigo-700 focus:ring focus:ring-indigo-300 transition">
-                                Add New Method
+                                Add New Category
                             </a>
                         </div>
                         <div class="overflow-x-auto">
@@ -46,40 +46,40 @@
                                 <thead class="bg-gray-50">
                                     <tr>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Slug</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
-                                    @forelse ($shippingMethods as $method)
+                                    @forelse ($categories as $category)
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ $method->name }}
+                                            {{ $category->name }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            Rp {{ number_format($method->price, 0, ',', '.') }}
+                                            {{ $category->slug }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <a href="{{ route('shipping.edit', $method) }}"
+                                            <a href="{{ route('category.edit', $category) }}"
                                                 class="text-yellow-600 hover:text-yellow-900 mr-3">Edit</a>
-                                            <form action="{{ route('shipping.destroy', $method) }}" method="POST" class="inline-block">
+                                            <form action="{{ route('category.destroy', $category) }}" method="POST" class="inline-block">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="text-red-600 hover:text-red-900"
-                                                    onclick="return confirm('Are you sure you want to delete this method?')">Delete</button>
+                                                    onclick="return confirm('Are you sure you want to delete this category?')">Delete</button>
                                             </form>
                                         </td>
                                     </tr>
                                     @empty
                                     <tr>
-                                        <td colspan="3" class="px-6 py-4 text-center text-sm text-gray-500">No shipping methods found.</td>
+                                        <td colspan="3" class="px-6 py-4 text-center text-sm text-gray-500">No categories found.</td>
                                     </tr>
                                     @endforelse
                                 </tbody>
                             </table>
                         </div>
                         <div class="px-6 py-4 border-t border-gray-200">
-                            {{ $shippingMethods->links() }}
+                            {{ $categories->links() }}
                         </div>
                     </div>
                 </main>

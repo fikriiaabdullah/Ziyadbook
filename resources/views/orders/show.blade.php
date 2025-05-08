@@ -54,13 +54,16 @@
                                             <p class="text-sm"><span class="font-medium">Order ID:</span> #{{ $order->id }}</p>
                                             <p class="text-sm"><span class="font-medium">Date:</span> {{ $order->created_at->format('d M Y H:i') }}</p>
                                             <p class="text-sm"><span class="font-medium">Payment Method:</span> {{ $order->payment_method == 'transfer_bank' ? 'Bank Transfer' : 'Cash on Delivery' }}</p>
-                                            <p class="text-sm"><span class="font-medium">Shipping Method:</span> {{ $order->shippingMethod->name }}</p>
+                                            <p class="text-sm"><span class="font-medium">Courier:</span> {{ strtoupper($order->courier) }}</p>
+                                            <p class="text-sm"><span class="font-medium">Service:</span> {{ $order->courier_service }}</p>
                                         </div>
                                         <div>
                                             <h4 class="text-sm font-medium text-gray-500 mb-2">Customer Information</h4>
                                             <p class="text-sm"><span class="font-medium">Name:</span> {{ $order->user_name }}</p>
                                             <p class="text-sm"><span class="font-medium">Email:</span> {{ $order->email }}</p>
                                             <p class="text-sm"><span class="font-medium">Address:</span> {{ $order->address }}</p>
+                                            <p class="text-sm"><span class="font-medium">Province:</span> {{ $provinceName ?? 'N/A' }}</p>
+                                            <p class="text-sm"><span class="font-medium">City:</span> {{ $cityName ?? 'N/A' }}</p>
                                         </div>
                                     </div>
 
@@ -81,7 +84,7 @@
                                                     <tr>
                                                         <td class="px-4 py-3 whitespace-nowrap">
                                                             <div class="flex items-center">
-                                                                @if($item->product->image)
+                                                                @if($item->product && $item->product->image)
                                                                 <img src="{{ asset($item->product->image) }}" alt="{{ $item->product->name }}" class="h-10 w-10 rounded-md object-cover mr-3">
                                                                 @else
                                                                 <div class="h-10 w-10 rounded-md bg-gray-200 flex items-center justify-center mr-3">
@@ -91,7 +94,7 @@
                                                                 </div>
                                                                 @endif
                                                                 <div>
-                                                                    <div class="text-sm font-medium text-gray-900">{{ $item->product->name }}</div>
+                                                                    <div class="text-sm font-medium text-gray-900">{{ $item->product ? $item->product->name : 'Product not found' }}</div>
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -110,7 +113,7 @@
                                                 <tfoot class="bg-gray-50">
                                                     <tr>
                                                         <td colspan="3" class="px-4 py-3 text-right text-sm font-medium">Shipping:</td>
-                                                        <td class="px-4 py-3 text-sm text-gray-500">Rp {{ number_format($order->shippingMethod->price, 0, ',', '.') }}</td>
+                                                        <td class="px-4 py-3 text-sm text-gray-500">Rp {{ number_format($order->shipping_cost, 0, ',', '.') }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td colspan="3" class="px-4 py-3 text-right text-sm font-medium">Total:</td>
@@ -155,6 +158,34 @@
                                             Update Status
                                         </button>
                                     </form>
+                                </div>
+                            </div>
+
+                            <!-- Payment Status Badges -->
+                            <div class="bg-white shadow-md rounded-lg overflow-hidden mb-6">
+                                <div class="px-6 py-4 border-b border-gray-200">
+                                    <h3 class="text-lg font-medium text-gray-900">Status</h3>
+                                </div>
+                                <div class="p-6">
+                                    <div class="flex flex-col space-y-3">
+                                        <div>
+                                            <span class="text-sm font-medium text-gray-700">Payment Status:</span>
+                                            <span class="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                {{ $order->payment_status == 'paid' ? 'bg-green-100 text-green-800' :
+                                                   ($order->payment_status == 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800') }}">
+                                                {{ ucfirst($order->payment_status) }}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <span class="text-sm font-medium text-gray-700">Shipping Status:</span>
+                                            <span class="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                {{ $order->shipping_status == 'selesai' ? 'bg-green-100 text-green-800' :
+                                                   ($order->shipping_status == 'dikirim' ? 'bg-blue-100 text-blue-800' :
+                                                   ($order->shipping_status == 'proses' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800')) }}">
+                                                {{ ucfirst($order->shipping_status) }}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 

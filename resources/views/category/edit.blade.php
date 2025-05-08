@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="min-h-screen bg-gray-100" x-data="{ sidebarOpen: true }">
-        <x-sidebar active="shipping" />
+        <x-sidebar active="category" />
 
         <!-- Main Content Area -->
         <div class="flex flex-col flex-1 transition-all duration-300 ease-in-out"
@@ -21,7 +21,7 @@
 
                     <!-- Page title -->
                     <h2 class="text-xl font-semibold text-gray-800">
-                        Edit Shipping Method
+                        Edit Category
                     </h2>
                 </div>
             </header>
@@ -32,38 +32,38 @@
                     <!-- Form Card -->
                     <div class="bg-white shadow-md rounded-lg overflow-hidden">
                         <div class="px-6 py-4 border-b border-gray-200">
-                            <h3 class="text-lg font-medium text-gray-900">Shipping Method Information</h3>
-                            <p class="mt-1 text-sm text-gray-500">Fill out the form below to update the shipping method.</p>
+                            <h3 class="text-lg font-medium text-gray-900">Category Information</h3>
+                            <p class="mt-1 text-sm text-gray-500">Fill out the form below to update the category.</p>
                         </div>
 
-                        <form action="{{ route('shipping.update', $shipping) }}" method="POST" class="p-6 space-y-6">
+                        <form action="{{ route('category.update', $category) }}" method="POST" class="p-6 space-y-6">
                             @csrf @method('PUT')
 
                             <!-- Name -->
                             <div>
                                 <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-                                <input name="name" id="name" value="{{ $shipping->name }}" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" required>
+                                <input name="name" id="name" value="{{ $category->name }}" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" required>
                                 @error('name')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
 
-                            <!-- Price -->
+                            <!-- Slug -->
                             <div>
-                                <label for="price" class="block text-sm font-medium text-gray-700">Price</label>
-                                <input name="price" type="number" step="0.01" value="{{ $shipping->price }}" id="price" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" required>
-                                @error('price')
+                                <label for="slug" class="block text-sm font-medium text-gray-700">Slug</label>
+                                <input name="slug" type="text" value="{{ $category->slug }}" id="slug" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" required>
+                                @error('slug')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
 
                             <!-- Form Actions -->
                             <div class="flex items-center justify-end space-x-3 pt-5 border-t border-gray-200">
-                                <a href="{{ route('shipping.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                <a href="{{ route('category.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                     Cancel
                                 </a>
                                 <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                    Update Shipping Method
+                                    Update Category
                                 </button>
                             </div>
                         </form>

@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ShippingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductOrderController;
+use App\Http\Controllers\RajaOngkirController;
 
 Route::view('/', 'welcome');
 
@@ -17,6 +19,11 @@ Route::get('/shop/order/success/{orderId}', [ProductOrderController::class, 'suc
 
 // Add these routes for order management and payment proof upload
 Route::post('/shop/payment/upload/{order}', [ProductOrderController::class, 'uploadPaymentProof'])->name('shop.payment.upload');
+
+// Add these routes for RajaOngkir API
+Route::get('/api/provinces', [RajaOngkirController::class, 'provinces'])->name('api.provinces');
+Route::get('/api/cities', [RajaOngkirController::class, 'cities'])->name('api.cities');
+Route::post('/api/shipping/cost', [RajaOngkirController::class, 'cost'])->name('api.shipping.cost');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -41,7 +48,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::put('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update.status');
     //Shipping routes
-    Route::resource('shipping', ShippingController::class);
+    Route::resource('category', CategoryController::class);
 });
 
 require __DIR__.'/auth.php';

@@ -3,12 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use App\Models\Payment;
+use App\Services\RajaOngkirService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
+    protected $rajaOngkirService;
+
+    public function __construct(RajaOngkirService $rajaOngkirService)
+    {
+        $this->rajaOngkirService = $rajaOngkirService;
+    }
+
     public function index()
     {
         $orders = Order::with(['items.product'])->latest()->paginate(10);
@@ -17,8 +23,13 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        $order->load(['items.product', 'shippingMethod', 'payment']);
-        return view('orders.show', compact('order'));
+        $order->load(['items.product', 'payment']);
+
+        // Get province and city names using RajaOngkirService
+        $provinceName = $this->rajaOngkirService->getProvinceName($order->province_id);
+        $cityName = $this->rajaOngkirService->getCityName($order->city_id);
+
+        return view('orders.show', compact('order', 'provinceName', 'cityName'));
     }
 
     public function updateStatus(Request $request, Order $order)
