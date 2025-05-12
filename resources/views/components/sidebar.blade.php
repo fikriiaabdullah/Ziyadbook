@@ -1,5 +1,6 @@
 @php
     $currentRoute = Route::currentRouteName();
+    $isProductsActive = in_array($currentRoute, ['products.index', 'landing-products.index', 'landing-products.edit']);
 @endphp
 
 <div class="fixed inset-y-0 left-0 z-30 w-64 bg-indigo-800 shadow-xl transform transition-transform duration-300 ease-in-out"
@@ -31,16 +32,55 @@
                 Dashboard
             </a>
 
-            <!-- Products -->
-            <a href="{{ route('products.index') }}"
-               class="flex items-center px-2 py-3 text-sm font-medium rounded-md
-               {{ $currentRoute === 'products.index' ? 'text-white bg-indigo-900' : 'text-indigo-100 hover:text-white hover:bg-indigo-700' }}">
-                <svg class="mr-3 h-5 w-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                </svg>
-                Products
-            </a>
+            <!-- Products with Dropdown -->
+            <div x-data="{ open: {{ $isProductsActive ? 'true' : 'false' }} }">
+                <!-- Products Parent Menu -->
+                <button @click="open = !open"
+                        class="w-full flex items-center justify-between px-2 py-3 text-sm font-medium rounded-md
+                        {{ $isProductsActive ? 'text-white bg-indigo-900' : 'text-indigo-100 hover:text-white hover:bg-indigo-700' }}">
+                    <div class="flex items-center">
+                        <svg class="mr-3 h-5 w-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
+                        </svg>
+                        Products
+                    </div>
+                    <svg class="h-5 w-5 text-indigo-300 transform transition-transform duration-200"
+                         :class="{'rotate-90': open, 'rotate-0': !open}"
+                         fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+
+                <!-- Dropdown Items -->
+                <div x-show="open" class="mt-1 pl-4 space-y-1" x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="transform opacity-0 scale-95"
+                     x-transition:enter-end="transform opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="transform opacity-100 scale-100"
+                     x-transition:leave-end="transform opacity-0 scale-95">
+
+                    <!-- Regular Products -->
+                    <a href="{{ route('products.index') }}"
+                       class="flex items-center px-2 py-2 text-sm font-medium rounded-md
+                       {{ $currentRoute === 'products.index' ? 'text-white bg-indigo-700' : 'text-indigo-100 hover:text-white hover:bg-indigo-700' }}">
+                        <svg class="mr-3 h-4 w-4 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                        Regular Products
+                    </a>
+
+                    <!-- Landing Products -->
+                    <a href="{{ route('landing-products.index') }}"
+                       class="flex items-center px-2 py-2 text-sm font-medium rounded-md
+                       {{ in_array($currentRoute, ['landing-products.index', 'landing-products.edit']) ? 'text-white bg-indigo-700' : 'text-indigo-100 hover:text-white hover:bg-indigo-700' }}">
+                        <svg class="mr-3 h-4 w-4 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                        Landing Products
+                    </a>
+                </div>
+            </div>
 
             <!-- Orders -->
             <a href="{{ route('orders.index') }}"

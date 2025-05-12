@@ -17,4 +17,14 @@ class Product extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+
+    public function landingPage()
+    {
+        return $this->hasOne(LandingProduct::class);
+    }
+
+    public function hasLandingPage()
+    {
+        return $this->landingPage()->exists();
+    }
 }

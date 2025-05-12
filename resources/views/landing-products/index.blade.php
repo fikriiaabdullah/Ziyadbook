@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="min-h-screen bg-gray-100" x-data="{ sidebarOpen: true }">
-        <x-sidebar active="products" />
+        <x-sidebar active="landing-products" />
 
         <div class="flex flex-col flex-1 transition-all duration-300 ease-in-out"
              :class="{'pl-64': sidebarOpen, 'pl-0': !sidebarOpen}">
@@ -17,7 +17,7 @@
                     </button>
 
                     <h2 class="text-xl font-semibold text-gray-800">
-                        {{ $title ?? 'Products' }}
+                        {{ $title ?? 'Landing Pages' }}
                     </h2>
                 </div>
             </header>
@@ -26,12 +26,12 @@
                 <div class="max-w-7xl mx-auto">
                     <!-- Page Header -->
                     <div class="flex justify-between items-center mb-6">
-                        <h1 class="text-2xl font-semibold text-gray-900">Products</h1>
-                        <a href="{{ route('products.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <h1 class="text-2xl font-semibold text-gray-900">Landing Pages</h1>
+                        <a href="{{ route('products.index') }}" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                             <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                             </svg>
-                            Add Product
+                            Select Product
                         </a>
                     </div>
 
@@ -57,13 +57,10 @@
                                         Price
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Stock
-                                    </th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Landing Page
+                                        Status
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        Actions🛍️
+                                        Actions
                                     </th>
                                 </tr>
                             </thead>
@@ -100,47 +97,29 @@
                                         <div class="text-sm text-gray-900">Rp {{ number_format($product->price, 0, ',', '.') }}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        @if($product->stock > 10)
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                            {{ $product->stock }} in stock
-                                        </span>
-                                        @elseif($product->stock > 0)
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                            {{ $product->stock }} left
-                                        </span>
-                                        @else
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                            Out of stock
-                                        </span>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        @if($product->hasLandingPage())
+                                        @if($product->landingPage && $product->landingPage->is_active)
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                             Active
                                         </span>
                                         @else
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                            Not Set
+                                            Inactive
                                         </span>
                                         @endif
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                         <div class="flex justify-end space-x-2">
-                                            <a href="{{ route('products.edit', $product->id) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
-                                            <a href="{{ route('landing-products.edit', $product->id) }}" class="text-green-600 hover:text-green-900">Landing Page</a>
-                                            <form method="POST" action="{{ route('products.destroy', $product->id) }}" class="inline" onsubmit="return confirm('Are you sure you want to delete this product?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:text-red-900">Delete</button>
-                                            </form>
+                                            <a href="{{ route('landing-products.edit', $product->id) }}" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                            @if($product->landingPage)
+                                            <a href="{{ route('landing-products.show', $product->id) }}" target="_blank" class="text-purple-600 hover:text-purple-900">View Landing</a>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="6" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">
-                                        No products found. <a href="{{ route('products.create') }}" class="text-indigo-600 hover:text-indigo-900">Add your first product</a>.
+                                    <td colspan="5" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">
+                                        No landing pages found. <a href="{{ route('products.index') }}" class="text-indigo-600 hover:text-indigo-900">Select a product to create landing page</a>.
                                     </td>
                                 </tr>
                                 @endforelse

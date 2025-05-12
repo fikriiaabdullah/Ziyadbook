@@ -1,0 +1,419 @@
+@php
+    if (!isset($product) && isset($landingProduct)) {
+        $product = $landingProduct->product;
+    }
+
+    // Fix variable name consistency
+    $landingPage = $landingProduct ?? null;
+
+    // Get related products if not already set
+    if (!isset($relatedProducts) && isset($product)) {
+        $relatedProducts = \App\Models\Product::where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->where('stock', '>', 0)
+            ->limit(4)
+            ->get();
+    } else {
+        $relatedProducts = collect();
+    }
+@endphp
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>{{ $landingPage->headline ?? $product->name }} | ZiyadBook</title>
+    <meta name="description" content="{{ \Illuminate\Support\Str::limit($landingPage->problem ?? $product->description, 160) }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="{{ asset('css/shop.css') }}" rel="stylesheet">
+    <style>
+        .highlight-box {
+            background-color: #f8fafc;
+            border-left: 4px solid #4f46e5;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0.375rem;
+        }
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        .benefit-icon {
+            flex-shrink: 0;
+            margin-right: 0.75rem;
+            color: #4f46e5;
+        }
+        .testimonial-card {
+            background-color: #f8fafc;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .quote-mark {
+            font-size: 3rem;
+            line-height: 1;
+            color: #e5e7eb;
+            font-family: serif;
+            margin-bottom: -1.5rem;
+        }
+    </style>
+
+    @if($product->meta_pixel_id)
+    <!-- Meta Pixel Code -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '{{ $product->meta_pixel_id }}');
+        fbq('track', 'PageView');
+        fbq('track', 'ViewContent', {
+            content_name: '{{ $product->name }}',
+            content_category: '{{ $product->category->name ?? "Uncategorized" }}',
+            content_ids: ['{{ $product->id }}'],
+            content_type: 'product',
+            value: {{ $product->price }},
+            currency: 'IDR'
+        });
+    </script>
+    <noscript>
+        <img height="1" width="1" style="display:none"
+            src="https://www.facebook.com/tr?id={{ $product->meta_pixel_id }}&ev=PageView&noscript=1"/>
+    </noscript>
+    <!-- End Meta Pixel Code -->
+    @endif
+</head>
+<body class="bg-gray-50">
+    <header id="header" class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="header-container container">
+            <a href="/" class="logo">
+                ZiyadBook
+            </a>
+            <div class="nav-links">
+                <a href="{{ route('shop.products.index') }}" class="nav-link">Shop</a>
+                <a href="{{ route('shop.products.index') }}#categories" class="nav-link">Categories</a>
+                <a href="{{ route('shop.products.index') }}#products" class="nav-link">All Books</a>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="#" class="cart-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 0 1-8 0"></path>
+                    </svg>
+                </a>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open mobile menu">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-header">
+            <a href="/" class="logo">
+                ZiyadBook
+            </a>
+            <button class="close-menu" id="closeMenu" aria-label="Close mobile menu">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="mobile-nav-links">
+            <a href="{{ route('shop.products.index') }}" class="mobile-nav-link">Shop</a>
+            <a href="{{ route('shop.products.index') }}#categories" class="mobile-nav-link">Categories</a>
+            <a href="{{ route('shop.products.index') }}#products" class="mobile-nav-link">All Books</a>
+        </div>
+    </div>
+
+    <main class="pt-6">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+            <!-- Breadcrumbs -->
+            <nav class="mb-4 text-sm">
+                <ol class="flex flex-wrap items-center space-x-2">
+                    <li><a href="{{ route('shop.products.index') }}" class="text-indigo-600 hover:text-indigo-800 transition">Home</a></li>
+                    <li><span class="text-gray-500 mx-2">/</span></li>
+                    @if($product->category)
+                    <li><a href="{{ route('shop.products.category', $product->category->id) }}" class="text-indigo-600 hover:text-indigo-800 transition">{{ $product->category->name }}</a></li>
+                    <li><span class="text-gray-500 mx-2">/</span></li>
+                    @endif
+                    <li class="text-gray-700 font-medium truncate max-w-xs">{{ $product->name }}</li>
+                </ol>
+            </nav>
+
+            <!-- Hero Section -->
+            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+                <div class="p-6 md:p-8 lg:p-10">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
+                                {{ $landingPage->headline ?? $product->name }}
+                            </h1>
+
+                            @if($landingPage && $landingPage->subheadline)
+                            <p class="text-xl text-gray-600 mb-6">{{ $landingPage->subheadline }}</p>
+                            @endif
+
+                            <div class="flex items-center mb-6">
+                                <div class="text-3xl font-bold text-indigo-600">
+                                    Rp {{ number_format($product->price, 0, ',', '.') }}
+                                </div>
+
+                                @if($product->stock > 0)
+                                    @if($product->stock <= 5)
+                                    <span class="ml-4 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                        </svg>
+                                        Limited Stock ({{ $product->stock }} left)
+                                    </span>
+                                    @else
+                                    <span class="ml-4 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        In Stock
+                                    </span>
+                                    @endif
+                                @else
+                                    <span class="ml-4 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                        Out of Stock
+                                    </span>
+                                @endif
+                            </div>
+
+                            <div class="mb-6">
+                                <a href="{{ route('shop.products.show', $product->id) }}" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-8 transition transform hover:scale-105">
+                                    {{ $landingPage->call_to_action ?? 'Buy Now' }}
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-center">
+                            <div class="relative rounded-lg overflow-hidden border border-gray-200 shadow-lg max-w-md">
+                                @if($product->image)
+                                <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="w-full h-auto object-contain">
+                                @else
+                                <div class="w-full h-80 bg-gray-200 flex items-center justify-center rounded-lg">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                    </svg>
+                                </div>
+                                @endif
+
+                                <!-- Product badges -->
+                                <div class="absolute top-4 left-4 flex flex-col gap-2">
+                                    @if($product->stock <= 5 && $product->stock > 0)
+                                    <span class="badge-pulse px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold">Limited Stock</span>
+                                    @elseif($product->stock <= 0)
+                                    <span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-xs font-semibold">Out of Stock</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAS Framework Content -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+                <!-- Problem Section -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            <h2 class="text-xl font-bold text-gray-900">The Problem</h2>
+                        </div>
+                        <div class="prose prose-indigo">
+                            {!! nl2br(e($landingPage->problem ?? 'Are you struggling with this problem? Many people face this challenge every day.')) !!}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agitate Section -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            <h2 class="text-xl font-bold text-gray-900">Why It Matters</h2>
+                        </div>
+                        <div class="prose prose-indigo">
+                            {!! nl2br(e($landingPage->agitate ?? 'Without addressing this issue, you might continue to experience these challenges and frustrations.')) !!}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Solution Section -->
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <h2 class="text-xl font-bold text-gray-900">The Solution</h2>
+                        </div>
+                        <div class="prose prose-indigo">
+                            {!! nl2br(e($landingPage->solution ?? 'Our product provides the perfect solution to help you overcome these challenges.')) !!}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benefits Section -->
+            @if($landingPage && $landingPage->benefits)
+            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-12">
+                <div class="p-6 md:p-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Key Benefits</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        @foreach(explode("\n", $landingPage->benefits) as $benefit)
+                            @if(trim($benefit))
+                            <div class="benefit-item">
+                                <div class="benefit-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <div>{{ trim($benefit) }}</div>
+                            </div>
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            <!-- Testimonials Section -->
+            @if($landingPage && $landingPage->testimonials)
+            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-12">
+                <div class="p-6 md:p-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">What Our Customers Say</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        @foreach(explode("\n", $landingPage->testimonials) as $testimonial)
+                            @if(trim($testimonial))
+                                @php
+                                    $parts = explode('|', trim($testimonial));
+                                    $name = $parts[0] ?? 'Customer';
+                                    $position = $parts[1] ?? '';
+                                    $quote = $parts[2] ?? $parts[0];
+                                @endphp
+                                <div class="testimonial-card">
+                                    <div class="quote-mark">"</div>
+                                    <p class="text-gray-700 mb-4">{{ $quote }}</p>
+                                    <div class="flex items-center">
+                                        <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500 font-bold">
+                                            {{ substr($name, 0, 1) }}
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium text-gray-900">{{ $name }}</p>
+                                            @if($position)
+                                            <p class="text-sm text-gray-500">{{ $position }}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            <!-- Call to Action -->
+            <div class="bg-indigo-700 rounded-lg shadow-xl overflow-hidden mb-12">
+                <div class="p-6 md:p-8 text-center">
+                    <h2 class="text-2xl md:text-3xl font-bold text-white mb-4">Ready to Solve Your Problem?</h2>
+                    <p class="text-indigo-100 mb-6 max-w-2xl mx-auto">Don't wait any longer. Get your copy of {{ $product->name }} today and start experiencing the benefits.</p>
+                    <a href="{{ route('shop.products.show', $product->id) }}" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-white hover:bg-indigo-50 md:py-4 md:text-lg md:px-8 transition transform hover:scale-105 shadow-lg">
+                        {{ $landingPage->call_to_action ?? 'Buy Now' }} - Rp {{ number_format($product->price, 0, ',', '.') }}
+                    </a>
+                </div>
+            </div>
+
+            <!-- Related Products -->
+            @if(count($relatedProducts) > 0)
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6 md:p-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">You May Also Like</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        @foreach($relatedProducts as $relatedProduct)
+                        <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition">
+                            <a href="{{ route('shop.products.show', $relatedProduct->id) }}" class="block">
+                                <div class="h-48 overflow-hidden">
+                                    @if($relatedProduct->image)
+                                    <img src="{{ asset($relatedProduct->image) }}" alt="{{ $relatedProduct->name }}" class="w-full h-full object-cover">
+                                    @else
+                                    <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                        </svg>
+                                    </div>
+                                    @endif
+                                </div>
+                                <div class="p-4">
+                                    <h3 class="text-lg font-medium text-gray-900 mb-1">{{ $relatedProduct->name }}</h3>
+                                    <p class="text-indigo-600 font-bold">Rp {{ number_format($relatedProduct->price, 0, ',', '.') }}</p>
+                                </div>
+                            </a>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            @endif
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 py-8">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <p class="text-sm text-gray-500">&copy; {{ date('Y') }} ZiyadBook. All rights reserved.</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-500 hover:text-gray-700">
+                        <span class="sr-only">Facebook</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-500 hover:text-gray-700">
+                        <span class="sr-only">Instagram</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                    <a href="#" class="text-gray-500 hover:text-gray-700">
+                        <span class="sr-only">Twitter</span>
+                        <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ asset('js/shop.js') }}"></script>
+</body>
+</html>
