@@ -16,6 +16,7 @@ class LandingProduct extends Model
         'call_to_action',
         'testimonials',
         'benefits',
+        'youtube_video_url',
         'is_active'
     ];
 

@@ -104,6 +104,13 @@
                                 <p class="mt-1 text-xs text-gray-500">List the key benefits of your product (one benefit per line).</p>
                             </div>
 
+                            <!-- YouTube Video URL -->
+                            <div>
+                                <label for="youtube_video_url" class="block text-sm font-medium text-gray-700">YouTube Video URL</label>
+                                <input type="text" name="youtube_video_url" id="youtube_video_url" value="{{ old('youtube_video_url', $landingProduct->youtube_video_url) }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                <p class="mt-1 text-xs text-gray-500">Enter the full YouTube video URL (e.g., https://www.youtube.com/watch?v=XXXXXXXXXXX).</p>
+                            </div>
+
                             <!-- Testimonials -->
                             <div>
                                 <label for="testimonials" class="block text-sm font-medium text-gray-700">Testimonials</label>

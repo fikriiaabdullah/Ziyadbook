@@ -60,6 +60,22 @@
             font-family: serif;
             margin-bottom: -1.5rem;
         }
+        /* Video responsive container */
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 0.5rem;
+        }
     </style>
 
     @if($product->meta_pixel_id)
@@ -198,13 +214,8 @@
                                     </span>
                                 @endif
                             </div>
-
-                            <div class="mb-6">
-                                <a href="{{ route('shop.products.show', $product->id) }}" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-8 transition transform hover:scale-105">
-                                    {{ $landingPage->call_to_action ?? 'Buy Now' }}
-                                </a>
-                            </div>
                         </div>
+
 
                         <div class="flex justify-center">
                             <div class="relative rounded-lg overflow-hidden border border-gray-200 shadow-lg max-w-md">
@@ -228,6 +239,34 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-8xl mx-auto mb-8 bg-white rounded-lg shadow-md overflow-hidden">
+                <!-- Main container with flex layout -->
+                <div class="flex flex-col md:flex-row items-center justify-between p-6">
+                    <!-- First image with caption -->
+                    <div class="mb-6 md:mb-0 md:w-1/3 flex flex-col items-center">
+                        <img src="{{ asset('images/mba-1.png') }}" alt="MBA 1" class="w-full h-auto rounded-lg shadow-sm mb-2">
+                        <p class="text-sm text-center text-gray-600">✨ Dapatkan Sekarang & Hadirkan Anak Anda Nilai Terbaik! ✨</p>
+                    </div>
+
+                    <!-- Middle section with Cart Icon -->
+                    <div class="py-4 md:w-1/3 flex flex-col items-center justify-center px-4">
+                        <a href="#call-to-action" class="text-indigo-600 hover:text-indigo-800 transition transform hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </a>
+                    </div>
+
+                    <!-- Second image with question mark -->
+                    <div class="md:w-1/3 flex flex-col items-center">
+                        <div class="relative">
+                            <img src="{{ asset('images/mba-2.png') }}" alt="MBA 2" class="w-full h-auto rounded-lg shadow-sm">
+                        </div>
+                        <p class="text-sm text-center text-gray-600 mt-2">Have questions? We're here to help!</p>
                     </div>
                 </div>
             </div>
@@ -303,6 +342,40 @@
             </div>
             @endif
 
+            <!-- YouTube Video Section -->
+            @if($landingPage && $landingPage->youtube_video_url)
+            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+                <div class="p-6 md:p-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Watch Our Video</h2>
+                    <div class="video-container">
+                        @php
+                            // Extract video ID from YouTube URL
+                            $videoId = '';
+                            $url = $landingPage->youtube_video_url;
+
+                            if (preg_match('/youtube\.com\/watch\?v=([^\&\?\/]+)/', $url, $matches)) {
+                                $videoId = $matches[1];
+                            } elseif (preg_match('/youtube\.com\/embed\/([^\&\?\/]+)/', $url, $matches)) {
+                                $videoId = $matches[1];
+                            } elseif (preg_match('/youtu\.be\/([^\&\?\/]+)/', $url, $matches)) {
+                                $videoId = $matches[1];
+                            }
+                        @endphp
+
+                        @if($videoId)
+                        <iframe
+                            src="https://www.youtube.com/embed/{{ $videoId }}"
+                            title="{{ $product->name }} Video"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                        </iframe>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <!-- Testimonials Section -->
             @if($landingPage && $landingPage->testimonials)
             <div class="bg-white rounded-lg shadow-md overflow-hidden mb-12">
@@ -340,7 +413,7 @@
             @endif
 
             <!-- Call to Action -->
-            <div class="bg-indigo-700 rounded-lg shadow-xl overflow-hidden mb-12">
+            <div id="call-to-action" class="bg-indigo-700 rounded-lg shadow-xl overflow-hidden mb-12">
                 <div class="p-6 md:p-8 text-center">
                     <h2 class="text-2xl md:text-3xl font-bold text-white mb-4">Ready to Solve Your Problem?</h2>
                     <p class="text-indigo-100 mb-6 max-w-2xl mx-auto">Don't wait any longer. Get your copy of {{ $product->name }} today and start experiencing the benefits.</p>

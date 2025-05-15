@@ -42,6 +42,7 @@ class LandingProductController extends Controller
             'agitate' => 'nullable|string',
             'solution' => 'nullable|string',
             'benefits' => 'nullable|string',
+            'youtube_video_url' => 'nullable|string|max:255',
             'testimonials' => 'nullable|string',
             'call_to_action' => 'nullable|string|max:255',
             'is_active' => 'boolean',
