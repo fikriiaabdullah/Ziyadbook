@@ -52,6 +52,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/landing-products/{product}/edit', [LandingProductController::class, 'edit'])->name('landing-products.edit');
     Route::put('/landing-products/{product}', [LandingProductController::class, 'update'])->name('landing-products.update');
     Route::get('/landing-products/{landingProduct}/show', [LandingProductController::class, 'show'])->name('landing-products.show');
+
+    // New routes for landing product image gallery
+    Route::get('/landing-products/image/{imageId}/delete', [LandingProductController::class, 'deleteImage'])->name('landing-products.delete-image');
+    Route::post('/landing-products/images/reorder', [LandingProductController::class, 'reorderImages'])->name('landing-products.reorder-images');
+
     //Order routes
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');

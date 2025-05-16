@@ -76,6 +76,95 @@
             height: 100%;
             border-radius: 0.5rem;
         }
+        /* Image gallery styles */
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.5rem;
+            font-size: 0.875rem;
+        }
+        /* Lightbox styles */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+        }
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+        }
+        .lightbox-image {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+        .lightbox-caption {
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            font-size: 1rem;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.5);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .lightbox-prev {
+            left: 1rem;
+        }
+        .lightbox-next {
+            right: 1rem;
+        }
     </style>
 
     @if($product->meta_pixel_id)
@@ -117,15 +206,6 @@
                 <a href="{{ route('shop.products.index') }}" class="nav-link">Shop</a>
                 <a href="{{ route('shop.products.index') }}#categories" class="nav-link">Categories</a>
                 <a href="{{ route('shop.products.index') }}#products" class="nav-link">All Books</a>
-            </div>
-            <div class="flex items-center gap-4">
-                <a href="#" class="cart-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <path d="M16 10a4 4 0 0 1-8 0"></path>
-                    </svg>
-                </a>
             </div>
             <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open mobile menu">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -243,6 +323,83 @@
                 </div>
             </div>
 
+            <!-- Image Gallery Section -->
+            @if($landingPage && $landingPage->images->count() > 0)
+            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+                <div class="p-6 md:p-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Product Gallery</h2>
+                    <div class="image-carousel relative">
+                        <!-- Main carousel container -->
+                        <div class="carousel-container h-80 relative overflow-hidden">
+                            @foreach($landingPage->images as $index => $image)
+                            <div class="carousel-item absolute top-0 left-0 w-full h-full transition-opacity duration-300 ease-in-out opacity-0 flex justify-center items-center" data-index="{{ $index }}">
+                                <img src="{{ asset($image->image_path) }}" alt="{{ $image->caption ?? $product->name }}" loading="lazy" class="max-h-full max-w-full object-contain">
+                                @if($image->caption)
+                                <div class="carousel-caption absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-3 text-center">
+                                    {{ $image->caption }}
+                                </div>
+                                @endif
+                            </div>
+                            @endforeach
+                        </div>
+
+                        <!-- Navigation arrows -->
+                        <button class="carousel-nav-left absolute left-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-30 hover:bg-opacity-60 text-white p-4 rounded-r-lg opacity-0 transition-opacity duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </button>
+                        <button class="carousel-nav-right absolute right-0 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-30 hover:bg-opacity-60 text-white p-4 rounded-l-lg opacity-0 transition-opacity duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </button>
+
+                        <!-- Indicator dots (optional) -->
+                        <div class="carousel-indicators flex justify-center gap-2 mt-4">
+                            @foreach($landingPage->images as $index => $image)
+                            <button class="carousel-indicator w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-500 transition-colors duration-200" data-index="{{ $index }}"></button>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            <!-- YouTube Video Section -->
+            @if($landingPage && $landingPage->youtube_video_url)
+            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+                <div class="p-6 md:p-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Watch Our Video</h2>
+                    <div class="video-container">
+                        @php
+                            // Extract video ID from YouTube URL
+                            $videoId = '';
+                            $url = $landingPage->youtube_video_url;
+
+                            if (preg_match('/youtube\.com\/watch\?v=([^\&\?\/]+)/', $url, $matches)) {
+                                $videoId = $matches[1];
+                            } elseif (preg_match('/youtube\.com\/embed\/([^\&\?\/]+)/', $url, $matches)) {
+                                $videoId = $matches[1];
+                            } elseif (preg_match('/youtu\.be\/([^\&\?\/]+)/', $url, $matches)) {
+                                $videoId = $matches[1];
+                            }
+                        @endphp
+
+                        @if($videoId)
+                        <iframe
+                            src="https://www.youtube.com/embed/{{ $videoId }}"
+                            title="{{ $product->name }} Video"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                        </iframe>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <div class="max-w-8xl mx-auto mb-8 bg-white rounded-lg shadow-md overflow-hidden">
                 <!-- Main container with flex layout -->
                 <div class="flex flex-col md:flex-row items-center justify-between p-6">
@@ -342,40 +499,6 @@
             </div>
             @endif
 
-            <!-- YouTube Video Section -->
-            @if($landingPage && $landingPage->youtube_video_url)
-            <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
-                <div class="p-6 md:p-8">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Watch Our Video</h2>
-                    <div class="video-container">
-                        @php
-                            // Extract video ID from YouTube URL
-                            $videoId = '';
-                            $url = $landingPage->youtube_video_url;
-
-                            if (preg_match('/youtube\.com\/watch\?v=([^\&\?\/]+)/', $url, $matches)) {
-                                $videoId = $matches[1];
-                            } elseif (preg_match('/youtube\.com\/embed\/([^\&\?\/]+)/', $url, $matches)) {
-                                $videoId = $matches[1];
-                            } elseif (preg_match('/youtu\.be\/([^\&\?\/]+)/', $url, $matches)) {
-                                $videoId = $matches[1];
-                            }
-                        @endphp
-
-                        @if($videoId)
-                        <iframe
-                            src="https://www.youtube.com/embed/{{ $videoId }}"
-                            title="{{ $product->name }} Video"
-                            frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen>
-                        </iframe>
-                        @endif
-                    </div>
-                </div>
-            </div>
-            @endif
-
             <!-- Testimonials Section -->
             @if($landingPage && $landingPage->testimonials)
             <div class="bg-white rounded-lg shadow-md overflow-hidden mb-12">
@@ -413,7 +536,7 @@
             @endif
 
             <!-- Call to Action -->
-            <div id="call-to-action" class="bg-indigo-700 rounded-lg shadow-xl overflow-hidden mb-12">
+            <div id="call-to-action" class="bg-indigo-500 rounded-lg shadow-xl overflow-hidden mb-12">
                 <div class="p-6 md:p-8 text-center">
                     <h2 class="text-2xl md:text-3xl font-bold text-white mb-4">Ready to Solve Your Problem?</h2>
                     <p class="text-indigo-100 mb-6 max-w-2xl mx-auto">Don't wait any longer. Get your copy of {{ $product->name }} today and start experiencing the benefits.</p>
@@ -464,19 +587,19 @@
                     <p class="text-sm text-gray-500">&copy; {{ date('Y') }} ZiyadBook. All rights reserved.</p>
                 </div>
                 <div class="flex space-x-6">
-                    <a href="#" class="text-gray-500 hover:text-gray-700">
+                    <a href="https://www.facebook.com/ziyadbooks.official/" class="text-gray-500 hover:text-gray-700">
                         <span class="sr-only">Facebook</span>
                         <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" />
                         </svg>
                     </a>
-                    <a href="#" class="text-gray-500 hover:text-gray-700">
+                    <a href="https://www.instagram.com/ziyadbooks.official/" class="text-gray-500 hover:text-gray-700">
                         <span class="sr-only">Instagram</span>
                         <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd" />
                         </svg>
                     </a>
-                    <a href="#" class="text-gray-500 hover:text-gray-700">
+                    <a href="https://twitter.com/ziyadbooks?lang=ca" class="text-gray-500 hover:text-gray-700">
                         <span class="sr-only">Twitter</span>
                         <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
@@ -487,6 +610,236 @@
         </div>
     </footer>
 
+    <!-- Lightbox for image gallery -->
+    <div id="lightbox" class="lightbox">
+        <span class="lightbox-close">&times;</span>
+        <div class="lightbox-content">
+            <img id="lightbox-image" class="lightbox-image" src="/placeholder.svg" alt="">
+            <div id="lightbox-caption" class="lightbox-caption"></div>
+        </div>
+        <span class="lightbox-nav lightbox-prev">&lt;</span>
+        <span class="lightbox-nav lightbox-next">&gt;</span>
+    </div>
+
     <script src="{{ asset('js/shop.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Image carousel functionality
+            const carousel = document.querySelector('.image-carousel');
+            if (carousel) {
+                const carouselItems = carousel.querySelectorAll('.carousel-item');
+                const navLeft = carousel.querySelector('.carousel-nav-left');
+                const navRight = carousel.querySelector('.carousel-nav-right');
+                const indicators = carousel.querySelectorAll('.carousel-indicator');
+                const container = carousel.querySelector('.carousel-container');
+
+                let carouselIndex = 0;
+                const totalCarouselItems = carouselItems.length;
+
+                // Initialize: show first item
+                if (carouselItems.length > 0) {
+                    carouselItems[0].classList.add('opacity-100');
+                    if (indicators.length > 0) {
+                        indicators[0].classList.remove('bg-gray-300');
+                        indicators[0].classList.add('bg-gray-700');
+                    }
+                }
+
+                // Function to move to a specific slide
+                function goToSlide(index) {
+                    if (index < 0) index = totalCarouselItems - 1;
+                    if (index >= totalCarouselItems) index = 0;
+
+                    // Hide all items and update indicators
+                    carouselItems.forEach((item, i) => {
+                        item.classList.remove('opacity-100');
+                        if (indicators.length > i) {
+                            indicators[i].classList.remove('bg-gray-700');
+                            indicators[i].classList.add('bg-gray-300');
+                        }
+                    });
+
+                    // Show selected item and update its indicator
+                    carouselItems[index].classList.add('opacity-100');
+                    if (indicators.length > index) {
+                        indicators[index].classList.remove('bg-gray-300');
+                        indicators[index].classList.add('bg-gray-700');
+                    }
+
+                    carouselIndex = index;
+                }
+
+                // Navigation event listeners
+                if (navLeft) navLeft.addEventListener('click', () => goToSlide(carouselIndex - 1));
+                if (navRight) navRight.addEventListener('click', () => goToSlide(carouselIndex + 1));
+
+                // Hover effects for navigation
+                container.addEventListener('mouseenter', () => {
+                    if (navLeft) {
+                        navLeft.classList.remove('opacity-0');
+                        navLeft.classList.add('opacity-100');
+                    }
+                    if (navRight) {
+                        navRight.classList.remove('opacity-0');
+                        navRight.classList.add('opacity-100');
+                    }
+                });
+
+                container.addEventListener('mouseleave', () => {
+                    if (navLeft) {
+                        navLeft.classList.remove('opacity-100');
+                        navLeft.classList.add('opacity-0');
+                    }
+                    if (navRight) {
+                        navRight.classList.remove('opacity-100');
+                        navRight.classList.add('opacity-0');
+                    }
+                });
+
+                // Setup indicator clicks
+                indicators.forEach((indicator, index) => {
+                    indicator.addEventListener('click', () => goToSlide(index));
+                });
+
+                // Enable hover navigation to left/right areas
+                const leftZone = document.createElement('div');
+                leftZone.className = 'absolute left-0 top-0 h-full w-1/5 z-10';
+
+                const rightZone = document.createElement('div');
+                rightZone.className = 'absolute right-0 top-0 h-full w-1/5 z-10';
+
+                container.appendChild(leftZone);
+                container.appendChild(rightZone);
+
+                leftZone.addEventListener('mouseenter', () => {
+                    if (navLeft) {
+                        navLeft.classList.remove('opacity-0');
+                        navLeft.classList.add('opacity-100');
+                    }
+                });
+
+                rightZone.addEventListener('mouseenter', () => {
+                    if (navRight) {
+                        navRight.classList.remove('opacity-0');
+                        navRight.classList.add('opacity-100');
+                    }
+                });
+
+                // On hover, navigate to previous/next image
+                leftZone.addEventListener('click', () => goToSlide(carouselIndex - 1));
+                rightZone.addEventListener('click', () => goToSlide(carouselIndex + 1));
+
+                // Make carousel items clickable to open lightbox
+                carouselItems.forEach((item, index) => {
+                    item.addEventListener('click', function() {
+                        if (typeof openLightbox === 'function') {
+                            openLightbox(index);
+                        }
+                    });
+                });
+            }
+
+            // Image gallery lightbox functionality
+            const galleryItems = document.querySelectorAll('.gallery-item');
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImage = document.getElementById('lightbox-image');
+            const lightboxCaption = document.getElementById('lightbox-caption');
+            const lightboxClose = document.querySelector('.lightbox-close');
+            const lightboxPrev = document.querySelector('.lightbox-prev');
+            const lightboxNext = document.querySelector('.lightbox-next');
+            let currentIndex = 0;
+
+            // Get all displayable items (either gallery items or carousel items)
+            const allItems = galleryItems.length > 0 ?
+                            galleryItems :
+                            document.querySelectorAll('.carousel-item');
+
+            if (allItems.length > 0 && lightbox) {
+                // Open lightbox when clicking on a gallery item
+                allItems.forEach(item => {
+                    if (!item.hasAttribute('data-lightbox-enabled')) {
+                        item.setAttribute('data-lightbox-enabled', 'true');
+                        item.addEventListener('click', function() {
+                            currentIndex = parseInt(this.dataset.index);
+                            openLightbox(currentIndex);
+                        });
+                    }
+                });
+
+                // Close lightbox
+                if (lightboxClose) {
+                    lightboxClose.addEventListener('click', function() {
+                        lightbox.style.display = 'none';
+                    });
+                }
+
+                // Navigate to previous image
+                if (lightboxPrev) {
+                    lightboxPrev.addEventListener('click', function() {
+                        currentIndex = (currentIndex - 1 + allItems.length) % allItems.length;
+                        openLightbox(currentIndex);
+                    });
+                }
+
+                // Navigate to next image
+                if (lightboxNext) {
+                    lightboxNext.addEventListener('click', function() {
+                        currentIndex = (currentIndex + 1) % allItems.length;
+                        openLightbox(currentIndex);
+                    });
+                }
+
+                // Close lightbox when clicking outside the image
+                lightbox.addEventListener('click', function(e) {
+                    if (e.target === lightbox) {
+                        lightbox.style.display = 'none';
+                    }
+                });
+
+                // Keyboard navigation
+                document.addEventListener('keydown', function(e) {
+                    if (lightbox.style.display === 'flex') {
+                        if (e.key === 'Escape') {
+                            lightbox.style.display = 'none';
+                        } else if (e.key === 'ArrowLeft') {
+                            currentIndex = (currentIndex - 1 + allItems.length) % allItems.length;
+                            openLightbox(currentIndex);
+                        } else if (e.key === 'ArrowRight') {
+                            currentIndex = (currentIndex + 1) % allItems.length;
+                            openLightbox(currentIndex);
+                        }
+                    }
+                });
+            }
+
+            // Function to open lightbox with specific image
+            function openLightbox(index) {
+                // First try to get the item from gallery items
+                let items = galleryItems.length > 0 ? galleryItems : document.querySelectorAll('.carousel-item');
+
+                if (!lightbox || !lightboxImage || items.length === 0) return;
+
+                const item = items[index];
+                const img = item.querySelector('img');
+                const caption = item.querySelector('.gallery-caption') || item.querySelector('.carousel-caption');
+
+                if (img) {
+                    lightboxImage.src = img.src;
+                    lightboxImage.alt = img.alt;
+                }
+
+                if (lightboxCaption) {
+                    if (caption) {
+                        lightboxCaption.textContent = caption.textContent;
+                        lightboxCaption.style.display = 'block';
+                    } else {
+                        lightboxCaption.style.display = 'none';
+                    }
+                }
+
+                lightbox.style.display = 'flex';
+            }
+        });
+    </script>
 </body>
 </html>
