@@ -536,13 +536,26 @@
             @endif
 
             <!-- Call to Action -->
-            <div id="call-to-action" class="bg-indigo-500 rounded-lg shadow-xl overflow-hidden mb-12">
-                <div class="p-6 md:p-8 text-center">
-                    <h2 class="text-2xl md:text-3xl font-bold text-white mb-4">Ready to Solve Your Problem?</h2>
-                    <p class="text-indigo-100 mb-6 max-w-2xl mx-auto">Don't wait any longer. Get your copy of {{ $product->name }} today and start experiencing the benefits.</p>
-                    <a href="{{ route('shop.products.show', $product->id) }}" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-white hover:bg-indigo-50 md:py-4 md:text-lg md:px-8 transition transform hover:scale-105 shadow-lg">
-                        {{ $landingPage->call_to_action ?? 'Buy Now' }} - Rp {{ number_format($product->price, 0, ',', '.') }}
-                    </a>
+            <div id="call-to-action" class="bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden mb-12 animate-fade-in-up">
+                <div class="p-6 md:p-8 text-center relative">
+                    <!-- Subtle animated background pattern -->
+                    <div class="absolute inset-0 opacity-5">
+                        <div class="animate-pulse bg-gradient-to-r from-gray-100 to-gray-200 h-full w-full"></div>
+                    </div>
+
+                    <div class="relative z-10">
+                        <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4 animate-slide-down">
+                            Ready to Solve Your Problem?
+                        </h2>
+                        <p class="text-gray-600 mb-6 max-w-2xl mx-auto animate-slide-up">
+                            Don't wait any longer. Get your copy of {{ $product->name }} today and start experiencing the benefits.
+                        </p>
+                        <a href="{{ route('shop.products.show', $product->id) }}"
+                        class="inline-flex items-center justify-center px-6 py-3 border-2 border-gray-900 text-base font-medium rounded-md text-white bg-gray-900 hover:bg-gray-800 hover:border-gray-800 md:py-4 md:text-lg md:px-8 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 shadow-lg hover:shadow-xl animate-bounce-subtle">
+                            <span class="mr-2">{{ $landingPage->call_to_action ?? 'Buy Now' }}</span>
+                            <span class="font-bold">- Rp {{ number_format($product->price, 0, ',', '.') }}</span>
+                        </a>
+                    </div>
                 </div>
             </div>
 
